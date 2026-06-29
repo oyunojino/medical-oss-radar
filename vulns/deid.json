@@ -1,0 +1,1 @@
+{"slug":"deid","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":6,"affected":[{"name":"black","version":"23.3.0","purl":"pkg:pypi/black@23.3.0","vulnIds":["GHSA-3936-cmfr-pm3m","GHSA-fj7x-q9j7-g6q6","PYSEC-2024-48"]}]}

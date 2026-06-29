@@ -1,0 +1,1 @@
+{"slug":"docs","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":15,"affected":[{"name":"tornado","version":"6.5.2","purl":"pkg:pypi/tornado@6.5.2","vulnIds":["GHSA-3x9g-8vmp-wqvf","GHSA-78cv-mqj4-43f7","GHSA-cx3h-4qpv-8hc9","GHSA-fqwm-6jpj-5wxc","GHSA-mgf9-4vpg-hj56","GHSA-pw6j-qg29-8w7f","GHSA-qjxf-f2mg-c6mc","PYSEC-2026-140"]}]}

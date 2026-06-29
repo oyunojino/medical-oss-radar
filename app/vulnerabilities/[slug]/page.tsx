@@ -1,0 +1,182 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { allProjects } from "@/lib/projects";
+import { loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
+import { severityOf, SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
+import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
+
+export const dynamic = "force-dynamic";
+
+const SEVERITY_BADGE: Record<SeverityLevel, string> = {
+  CRITICAL: "border-coral bg-coral-soft text-coral",
+  HIGH: "border-coral/60 bg-coral-soft text-coral",
+  MEDIUM: "border-amber bg-amber-soft text-amber",
+  LOW: "border-vital/60 bg-vital-soft text-vital",
+  UNKNOWN: "border-line bg-panel text-muted",
+};
+
+export default async function VulnerabilityDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const report = await readSlugReport(params.slug);
+  if (!report) notFound();
+
+  const db = await loadVulnDb();
+  const summary = summarizeReport(params.slug, report, db);
+  const project = allProjects.find((p) => p.slug === params.slug);
+
+  const uniqueIds = [...new Set(report.affected.flatMap((c) => c.vulnIds))].sort(
+    (a, b) => SEVERITY_ORDER.indexOf(severityOf(db[a])) - SEVERITY_ORDER.indexOf(severityOf(db[b]))
+  );
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <header className="mb-8 flex flex-col gap-2 border-b border-line pb-6">
+        <Link href="/vulnerabilities" className="text-sm text-vital hover:underline">
+          ← 취약점 목록으로
+        </Link>
+        <p className="font-mono text-xs tracking-tagcode text-vital">
+          {project?.categoryCode ?? "VULN"}
+        </p>
+        <h1 className="text-2xl font-semibold text-ink sm:text-3xl">
+          {project?.name ?? params.slug}
+        </h1>
+        {project?.owner && project?.repo && (
+          <a
+            href={`https://github.com/${project.owner}/${project.repo}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-sm text-muted hover:text-ink"
+          >
+            github.com/{project.owner}/{project.repo}
+          </a>
+        )}
+
+        <div className="mt-2 flex flex-wrap gap-3 font-mono text-xs text-muted">
+          <span>구성요소 {report.componentCount}</span>
+          <span>영향받는 구성요소 {summary.affectedComponentCount}</span>
+          <span>고유 취약점 {summary.vulnCount}</span>
+          {report.scannedAt && (
+            <span>스캔 {new Date(report.scannedAt).toLocaleString("ko-KR")}</span>
+          )}
+        </div>
+
+        <Link href={`/sbom/${params.slug}`} className="mt-1 text-sm text-vital hover:underline">
+          이 프로젝트의 SBOM 보기 →
+        </Link>
+
+        {summary.vulnCount > 0 && (
+          <div className="mt-3">
+            <SeverityBar counts={summary.bySeverity} className="h-2.5" />
+            <div className="mt-2 flex flex-wrap gap-3 font-mono text-[0.7rem] text-muted">
+              {SEVERITY_ORDER.filter((level) => summary.bySeverity[level] > 0).map((level) => (
+                <span key={level} className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{ background: SEVERITY_COLOR[level] }}
+                  />
+                  {level} {summary.bySeverity[level]}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </header>
+
+      {summary.vulnCount === 0 ? (
+        <p className="py-16 text-center text-sm text-vital">
+          OSV.dev 기준 알려진 취약점이 발견되지 않았습니다.
+        </p>
+      ) : (
+        <>
+          <section className="mb-10">
+            <h2 className="mb-2 text-sm font-semibold text-ink">
+              취약점 ({uniqueIds.length})
+            </h2>
+            <div className="flex flex-col gap-3">
+              {uniqueIds.map((id) => {
+                const vuln = db[id];
+                const severity = severityOf(vuln);
+                const affectedNames = report.affected
+                  .filter((c) => c.vulnIds.includes(id))
+                  .map((c) => `${c.name}${c.version ? `@${c.version}` : ""}`);
+                return (
+                  <div key={id} className="rounded-md border border-line bg-panel p-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <a
+                        href={`https://osv.dev/vulnerability/${id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-sm font-semibold text-vital hover:underline"
+                      >
+                        {id}
+                      </a>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[severity]}`}
+                      >
+                        {severity}
+                      </span>
+                      {(vuln?.aliases ?? []).slice(0, 3).map((alias) => (
+                        <span
+                          key={alias}
+                          className="rounded-full border border-line px-2 py-0.5 font-mono text-[0.7rem] text-muted"
+                        >
+                          {alias}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-sm text-ink">
+                      {vuln?.summary || "요약 정보 없음"}
+                    </p>
+                    <p className="mt-2 text-xs text-muted">
+                      영향받는 구성요소: {affectedNames.join(", ")}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-sm font-semibold text-ink">
+              영향받는 구성요소 ({summary.affectedComponentCount})
+            </h2>
+            <div className="overflow-x-auto rounded-md border border-line">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-panel text-xs uppercase text-muted">
+                  <tr>
+                    <th className="px-3 py-2">이름</th>
+                    <th className="px-3 py-2">버전</th>
+                    <th className="px-3 py-2">취약점</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {report.affected.map((c) => (
+                    <tr key={c.purl} className="border-t border-line">
+                      <td className="px-3 py-1.5 font-mono text-ink">{c.name}</td>
+                      <td className="px-3 py-1.5 text-muted">{c.version ?? "—"}</td>
+                      <td className="px-3 py-1.5">
+                        <div className="flex flex-wrap gap-1.5">
+                          {c.vulnIds.map((id) => (
+                            <span
+                              key={id}
+                              className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[severityOf(db[id])]}`}
+                            >
+                              {id}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
+      )}
+    </div>
+  );
+}

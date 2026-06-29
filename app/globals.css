@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background: #F6F7F9;
+}
+
+body {
+  color: #11181F;
+}
+
+/* Hairline rule used for chart-style section dividers */
+.chart-rule {
+  background-image: linear-gradient(to right, #DCE1E6 0 6px, transparent 6px 10px);
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  background-position: left center;
+  height: 1px;
+}
+
+/* Pulse line animation: a slow, low-amplitude breathing glow, active status only */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.pulse-active {
+  animation: pulse-glow 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-active {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+::selection {
+  background: #E7F4F1;
+  color: #11181F;
+}

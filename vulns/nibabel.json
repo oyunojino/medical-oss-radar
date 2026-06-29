@@ -1,0 +1,1 @@
+{"slug":"nibabel","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":110,"affected":[{"name":"uv","version":"0.11.14","purl":"pkg:pypi/uv@0.11.14","vulnIds":["GHSA-4gg8-gxpx-9rph"]}]}

@@ -1,0 +1,1 @@
+{"slug":"blaze","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":361,"affected":[{"name":"esbuild","version":"0.27.7","purl":"pkg:npm/esbuild@0.27.7","vulnIds":["GHSA-g7r4-m6w7-qqqr"]},{"name":"form-data","version":"4.0.5","purl":"pkg:npm/form-data@4.0.5","vulnIds":["GHSA-hmw2-7cc7-3qxx"]}]}

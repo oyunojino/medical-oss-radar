@@ -1,0 +1,1172 @@
+[
+  {
+    "slug": "dwv",
+    "name": "dwv",
+    "owner": "ivmartel",
+    "repo": "dwv",
+    "description": "DICOM Web Viewer: open source zero footprint medical image library.",
+    "tags": [
+      "JavaScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:dicom"
+  },
+  {
+    "slug": "imageio",
+    "name": "imageio",
+    "owner": "imageio",
+    "repo": "imageio",
+    "description": "Python library for reading and writing image data",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:dicom"
+  },
+  {
+    "slug": "dicom",
+    "name": "dicom",
+    "owner": "suyashkumar",
+    "repo": "dicom",
+    "description": "⚡High Performance DICOM Medical Image Parser in Go.",
+    "tags": [
+      "Go",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:dicom"
+  },
+  {
+    "slug": "ctk",
+    "name": "CTK",
+    "owner": "commontk",
+    "repo": "CTK",
+    "description": "A set of common support code for medical imaging, surgical navigation, and related purposes.",
+    "tags": [
+      "C++",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:dicom"
+  },
+  {
+    "slug": "spezi",
+    "name": "Spezi",
+    "owner": "StanfordSpezi",
+    "repo": "Spezi",
+    "description": "Open-source framework for rapid development of modern, interoperable digital health applications.",
+    "tags": [
+      "Swift",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "awesome-biosignal-foundation-model",
+    "name": "Awesome-Biosignal-Foundation-Model",
+    "owner": "guxiao0822",
+    "repo": "Awesome-Biosignal-Foundation-Model",
+    "description": "A curated list of foundation models, datasets, and tools for biosignals",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "parkinsum",
+    "name": "ParkinSUM",
+    "owner": "albertzhzhou-droid",
+    "repo": "ParkinSUM",
+    "description": "Local-first Flutter application for Parkinson's disease diet-medication education and levodopa-food interaction awareness.",
+    "tags": [
+      "Dart",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "noreel",
+    "name": "NoReel",
+    "owner": "Kalbra",
+    "repo": "NoReel",
+    "description": "Block the Instagram reel feed and other addictive features to drastically reduce your screentime.",
+    "tags": [
+      "Kotlin",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "healthwallet-me",
+    "name": "HealthWallet.me",
+    "owner": "LifeValue",
+    "repo": "HealthWallet.me",
+    "description": "Open-source, patient-controlled health record app with on-device AI. Aggregates medical data from 52K+ providers via FHIR R4. Offline-first. Flutter.",
+    "tags": [
+      "Dart",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "normwear",
+    "name": "NormWear",
+    "owner": "Mobile-Sensing-and-UbiComp-Laboratory",
+    "repo": "NormWear",
+    "description": "A Foundation Model for Multivariate Wearable Sensing of Physiological Signals.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "personal-health-insights-agent",
+    "name": "personal-health-insights-agent",
+    "owner": "yahskapar",
+    "repo": "personal-health-insights-agent",
+    "description": "Personal Health Insights Agent (PHIA)",
+    "tags": [
+      "Jupyter Notebook",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "medkit",
+    "name": "medkit",
+    "owner": "medkit-lib",
+    "repo": "medkit",
+    "description": "Toolkit for a learning health system",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:digital-health"
+  },
+  {
+    "slug": "miscnn",
+    "name": "MIScnn",
+    "owner": "frankkramer-lab",
+    "repo": "MIScnn",
+    "description": "A framework for Medical Image Segmentation with Convolutional Neural Networks and Deep Learning",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "docs",
+    "name": "docs",
+    "owner": "cds-hooks",
+    "repo": "docs",
+    "description": "CDS Hooks website & specification",
+    "tags": [
+      "Procfile",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "cyclops",
+    "name": "cyclops",
+    "owner": "VectorInstitute",
+    "repo": "cyclops",
+    "description": "A toolkit for evaluating and monitoring AI models in clinical settings",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "oaprogression",
+    "name": "OAProgression",
+    "owner": "imedslab",
+    "repo": "OAProgression",
+    "description": "Multimodal Machine Learning-based Knee Osteoarthritis Progression Prediction from Plain Radiographs and Clinical Data",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "cql-execution",
+    "name": "cql-execution",
+    "owner": "cqframework",
+    "repo": "cql-execution",
+    "description": "A JavaScript framework for executing CQL",
+    "tags": [
+      "JavaScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "cqf-ruler",
+    "name": "cqf-ruler",
+    "owner": "cqframework",
+    "repo": "cqf-ruler",
+    "description": "FHIR Clinical Reasoning Module Server",
+    "tags": [
+      "Java",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "cql-formatting-and-usage-wiki",
+    "name": "CQL-Formatting-and-Usage-Wiki",
+    "owner": "cqframework",
+    "repo": "CQL-Formatting-and-Usage-Wiki",
+    "description": "A collaborative workspace for the development of CQL formatting conventions and usage patterns for artifact development. The home of Cooking with CQL Examples, visit the wiki for more.",
+    "tags": [
+      "CQL",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "ahrq-cds-connect-authoring-tool",
+    "name": "AHRQ-CDS-Connect-Authoring-Tool",
+    "owner": "AHRQ-CDS",
+    "repo": "AHRQ-CDS-Connect-Authoring-Tool",
+    "description": "The CDS Authoring Tool is part of the CDS Connect project https://cds.ahrq.gov/, sponsored by the Agency for Healthcare Research and Quality (AHRQ), and developed under contract with AHRQ by MITRE's CAMH FFRDC.",
+    "tags": [
+      "JavaScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "clinical-reasoning",
+    "name": "clinical-reasoning",
+    "owner": "cqframework",
+    "repo": "clinical-reasoning",
+    "description": "CQF Clinical Reasoning on FHIR for Java",
+    "tags": [
+      "Java",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "aucmedi",
+    "name": "aucmedi",
+    "owner": "frankkramer-lab",
+    "repo": "aucmedi",
+    "description": "a framework for Automated Classification of Medical Images",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "genericcdss",
+    "name": "GenericCDSS",
+    "owner": "bioinformatics-ua",
+    "repo": "GenericCDSS",
+    "description": "GenericCDSS is a web-based application, which provides the main dashboard where professionals (e.g, practitioners, nurses) can follow all the patients that are under their responsibility and some details about the state of each one.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "awell-score",
+    "name": "awell-score",
+    "owner": "awell-health",
+    "repo": "awell-score",
+    "description": "A package of clinically validated score calculations designed for easy integration into proprietary software systems.",
+    "tags": [
+      "TypeScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "sets2sets",
+    "name": "Sets2Sets",
+    "owner": "HaojiHu",
+    "repo": "Sets2Sets",
+    "description": "Sequential sets to sequential sets learning",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:clinical-decision-support"
+  },
+  {
+    "slug": "awesome-bioie",
+    "name": "awesome-bioie",
+    "owner": "caufieldjh",
+    "repo": "awesome-bioie",
+    "description": "🧫 A curated list of resources relevant to doing Biomedical Information Extraction (including BioNLP)",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "med-palm",
+    "name": "Med-PaLM",
+    "owner": "kyegomez",
+    "repo": "Med-PaLM",
+    "description": "Towards Generalist Biomedical AI",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "visual-med-alpaca",
+    "name": "visual-med-alpaca",
+    "owner": "cambridgeltl",
+    "repo": "visual-med-alpaca",
+    "description": "Visual Med-Alpaca is an open-source, multi-modal foundation model designed specifically for the biomedical domain, built on the LLaMa-7B.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "bioxelnodes",
+    "name": "BioxelNodes",
+    "owner": "OmooLab",
+    "repo": "BioxelNodes",
+    "description": "For scientific volumetric data visualization in Blender.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "biocypher",
+    "name": "biocypher",
+    "owner": "biocypher",
+    "repo": "biocypher",
+    "description": "A unifying framework for biomedical research knowledge graphs",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "mol-instructions",
+    "name": "Mol-Instructions",
+    "owner": "zjunlp",
+    "repo": "Mol-Instructions",
+    "description": "[ICLR 2024] Mol-Instructions: A Large-Scale Biomolecular Instruction Dataset for Large Language Models",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "sleepeegnet",
+    "name": "SleepEEGNet",
+    "owner": "MousaviSajad",
+    "repo": "SleepEEGNet",
+    "description": "SleepEEGNet: Automated Sleep Stage Scoring with Sequence to Sequence Deep Learning Approach",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "mrbiomics",
+    "name": "MrBiomics",
+    "owner": "epigen",
+    "repo": "MrBiomics",
+    "description": "MrBiomics: Composable modules and recipes automate bioinformatics for multi-omics analyses",
+    "tags": [
+      "R",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "repmode",
+    "name": "RepMode",
+    "owner": "Correr-Zhou",
+    "repo": "RepMode",
+    "description": "[CVPR 2023 (Highlight)] Offical implementation of the paper \"RepMode: Learning to Re-parameterize Diverse Experts for Subcellular Structure Prediction\".",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "mediar",
+    "name": "MEDIAR",
+    "owner": "Lee-Gihun",
+    "repo": "MEDIAR",
+    "description": "(NeurIPS 2022 CellSeg Challenge - 1st Winner) Open source code for \"MEDIAR: Harmony of Data-Centric and Model-Centric for Multi-Modality Microscopy\"",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "scirun",
+    "name": "SCIRun",
+    "owner": "SCIInstitute",
+    "repo": "SCIRun",
+    "description": "SCIRun is a Problem Solving Environment, for modeling, simulation and visualization of scientific problems. This is version 5, the upgraded version of SCIRun v4.",
+    "tags": [
+      "C++",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "awesome-healthcare-datasets",
+    "name": "awesome-healthcare-datasets",
+    "owner": "geniusrise",
+    "repo": "awesome-healthcare-datasets",
+    "description": "Healthcare and biomedical datasets, for AI/ML",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "bio-epidemiology-ner",
+    "name": "Bio-Epidemiology-NER",
+    "owner": "dreji18",
+    "repo": "Bio-Epidemiology-NER",
+    "description": "Recognize bio-medical entities from a text corpus",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "bran",
+    "name": "bran",
+    "owner": "patverga",
+    "repo": "bran",
+    "description": "Full abstract relation extraction from biological texts with bi-affine relation attention networks",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:biomedical"
+  },
+  {
+    "slug": "telemedicine",
+    "name": "Telemedicine",
+    "owner": "opensource-emr",
+    "repo": "Telemedicine",
+    "description": "This is a free open source telemedicine project which helps doctors and patients connect via video call.",
+    "tags": [
+      "CSS",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:telehealth"
+  },
+  {
+    "slug": "gsoc",
+    "name": "GSoC",
+    "owner": "uaanchorage",
+    "repo": "GSoC",
+    "description": "Alaska Project Ideas, mentored by the researchers and collaborators of University of Alaska and supported by open-source entities and enthusiasts in Alaska.",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:telehealth"
+  },
+  {
+    "slug": "deep-learning-for-medical-applications",
+    "name": "Deep-Learning-for-Medical-Applications",
+    "owner": "albarqouni",
+    "repo": "Deep-Learning-for-Medical-Applications",
+    "description": "Deep Learning Papers on Medical Image Analysis",
+    "tags": [
+      "TeX",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "dicoogle",
+    "name": "dicoogle",
+    "owner": "dicoogle",
+    "repo": "dicoogle",
+    "description": "Dicoogle - Open Source PACS",
+    "tags": [
+      "Java",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "medquad",
+    "name": "MedQuAD",
+    "owner": "abachaa",
+    "repo": "MedQuAD",
+    "description": "Medical Question Answering Dataset of 47,457 QA pairs created from 12 NIH websites",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "quickumls",
+    "name": "QuickUMLS",
+    "owner": "Georgetown-IR-Lab",
+    "repo": "QuickUMLS",
+    "description": "System for Medical Concept Extraction and Linking",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "existing-medical-qa-datasets",
+    "name": "Existing-Medical-QA-Datasets",
+    "owner": "abachaa",
+    "repo": "Existing-Medical-QA-Datasets",
+    "description": "Multimodal Question Answering in the Medical Domain: A summary of Existing Datasets and Systems",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "medmcqa",
+    "name": "medmcqa",
+    "owner": "medmcqa",
+    "repo": "medmcqa",
+    "description": "A large-scale (194k), Multiple-Choice Question Answering (MCQA) dataset designed to address realworld medical entrance exam questions.",
+    "tags": [
+      "Jupyter Notebook",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "gandlf",
+    "name": "GaNDLF",
+    "owner": "mlcommons",
+    "repo": "GaNDLF",
+    "description": "A generalizable application framework for segmentation, regression, and classification using PyTorch",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "summarize-radiology-findings",
+    "name": "summarize-radiology-findings",
+    "owner": "yuhaozhang",
+    "repo": "summarize-radiology-findings",
+    "description": "Code and pretrained model for paper \"Learning to Summarize Radiology Findings\"",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "contextualized",
+    "name": "Contextualized",
+    "owner": "AdaptInfer",
+    "repo": "Contextualized",
+    "description": "An SKLearn-style toolbox for estimating and analyzing models, distributions, and functions with context-specific parameters.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "biomedical-nlp-corpus",
+    "name": "BioMedical-NLP-corpus",
+    "owner": "zonghui0228",
+    "repo": "BioMedical-NLP-corpus",
+    "description": "Biomedical NLP Corpus or Datasets.",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "pytorch-dicom-classification",
+    "name": "pytorch-dicom-classification",
+    "owner": "mjpyeon",
+    "repo": "pytorch-dicom-classification",
+    "description": "Code for analyzing medical images saved as .dicom files",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "textunderstandingtsetlinmachine",
+    "name": "TextUnderstandingTsetlinMachine",
+    "owner": "cair",
+    "repo": "TextUnderstandingTsetlinMachine",
+    "description": "Using the Tsetlin Machine to learn human-interpretable rules for high-accuracy text categorization with medical applications",
+    "tags": [
+      "Cuda",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "fhirpack",
+    "name": "fhirpack",
+    "owner": "fhirpack",
+    "repo": "fhirpack",
+    "description": "FHIR Python Analysis Client and Kit (FHIRPACK) is a general purpose FHIR client that simplifies the access, analysis and representation of FHIR and EHR data using PANDAS, an ETL philosophy and a functional syntax. It was initially developed at the IKIM and HDDBS in Germany. Read more at https://zenodo.org/record/8006589",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:medical-informatics"
+  },
+  {
+    "slug": "medplum",
+    "name": "medplum",
+    "owner": "medplum",
+    "repo": "medplum",
+    "description": "Medplum is a healthcare platform that helps you quickly develop high-quality compliant applications.",
+    "tags": [
+      "TypeScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "skyeye",
+    "name": "skyeye",
+    "owner": "dromara",
+    "repo": "skyeye",
+    "description": "智能办公OA系统[SpringBoot2-快速开发平台]，适用于医院，学校，中小型企业等机构的管理。Activiti5.22+动态表单实现零java代码即可做到复杂业务的流程实施，同时包含文件在线操作、日志、考勤、CRM、ERP进销存、项目、拖拽式生成问卷、日程、笔记、计划、行政等多种复杂业务功能。同时，可进行授权二开。",
+    "tags": [
+      "Java",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "marley",
+    "name": "marley",
+    "owner": "earthians",
+    "repo": "marley",
+    "description": "Open Source, Enterprise and Modern Health Information System",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "hospital-management-emr",
+    "name": "hospital-management-emr",
+    "owner": "opensource-emr",
+    "repo": "hospital-management-emr",
+    "description": "A complete open source for electronic healthcare record management in Hospitals, Clinics and Pharmacy.",
+    "tags": [
+      "JavaScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "awesome-ehr-deeplearning",
+    "name": "awesome-ehr-deeplearning",
+    "owner": "hurcy",
+    "repo": "awesome-ehr-deeplearning",
+    "description": "Curated list of awesome papers for electronic health records(EHR) mining, machine learning, and deep learning.",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "eicu-code",
+    "name": "eicu-code",
+    "owner": "MIT-LCP",
+    "repo": "eicu-code",
+    "description": "Code and website related to the eICU Collaborative Research Database",
+    "tags": [
+      "Jupyter Notebook",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "ottehr",
+    "name": "ottehr",
+    "owner": "masslight",
+    "repo": "ottehr",
+    "description": "Modular, Production-Ready, Open-Source EHR",
+    "tags": [
+      "TypeScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "gnn-for-ehr",
+    "name": "GNN_for_EHR",
+    "owner": "NYUMedML",
+    "repo": "GNN_for_EHR",
+    "description": "Code for \"Graph Neural Network on Electronic Health Records for Predicting Alzheimer’s Disease\"",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "healthchain",
+    "name": "HealthChain",
+    "owner": "healthchainai",
+    "repo": "HealthChain",
+    "description": "Python SDK for healthcare AI: connect models to live EHR systems, skip the integration tax 💫 🏥",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "cabolabs-ehrserver",
+    "name": "cabolabs-ehrserver",
+    "owner": "ppazos",
+    "repo": "cabolabs-ehrserver",
+    "description": "Open platform to manage and share standardized clinical data, designed by @ppazos at CaboLabs Health Informatics.",
+    "tags": [
+      "Groovy",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "openscribe",
+    "name": "OpenScribe",
+    "owner": "sammargolis",
+    "repo": "OpenScribe",
+    "description": "OpenScribe is an open-source AI scribe that records patient encounters and generates structured clinical notes automatically. You keep full control over data, workflows, and patient privacy with no vendor lock-in.",
+    "tags": [
+      "TypeScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:ehr"
+  },
+  {
+    "slug": "mirobody",
+    "name": "mirobody",
+    "owner": "thetahealth",
+    "repo": "mirobody",
+    "description": "Your Data, Your AI — Health, Finance & More. Open Source, Privacy-First.",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "zato",
+    "name": "zato",
+    "owner": "zatosource",
+    "repo": "zato",
+    "description": "ESB, SOA, REST, APIs and Cloud Integrations in Python",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "metriport",
+    "name": "metriport",
+    "owner": "metriport",
+    "repo": "metriport",
+    "description": "Metriport is an open-source universal API for healthcare data.",
+    "tags": [
+      "JavaScript",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "fhir",
+    "name": "fhir",
+    "owner": "HL7",
+    "repo": "fhir",
+    "description": "Official source for the HL7 FHIR Specification",
+    "tags": [
+      "HTML",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "client-py",
+    "name": "client-py",
+    "owner": "smart-on-fhir",
+    "repo": "client-py",
+    "description": "Python SMART on FHIR client",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "android-fhir",
+    "name": "android-fhir",
+    "owner": "ohs-foundation",
+    "repo": "android-fhir",
+    "description": "The Android FHIR SDK is a set of Kotlin libraries for building offline-capable, mobile-first healthcare applications using the HL7® FHIR® standard on Android.",
+    "tags": [
+      "Kotlin",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "fhir-resources",
+    "name": "fhir.resources",
+    "owner": "nazrulworld",
+    "repo": "fhir.resources",
+    "description": "FHIR Resources https://www.hl7.org/fhir/resourcelist.html",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "fhir-converter",
+    "name": "FHIR-Converter",
+    "owner": "microsoft",
+    "repo": "FHIR-Converter",
+    "description": "Conversion utility to translate legacy data formats into FHIR",
+    "tags": [
+      "Liquid",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "dicom-server",
+    "name": "dicom-server",
+    "owner": "microsoft",
+    "repo": "dicom-server",
+    "description": "OSS Implementation of DICOMweb standard",
+    "tags": [
+      "C#",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "github-topics:fhir"
+  },
+  {
+    "slug": "awesome",
+    "name": "awesome",
+    "owner": "sindresorhus",
+    "repo": "awesome",
+    "description": "😎 Awesome lists about all kinds of interesting topics",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "erpnext",
+    "name": "erpnext",
+    "owner": "frappe",
+    "repo": "erpnext",
+    "description": "Free and Open Source Enterprise Resource Planning (ERP)",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "vertical-medical",
+    "name": "vertical-medical",
+    "owner": "OCA",
+    "repo": "vertical-medical",
+    "description": "Open Source Healthcare System for Odoo",
+    "tags": [
+      "Unknown",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "openclinic",
+    "name": "openclinic",
+    "owner": "jact",
+    "repo": "openclinic",
+    "description": "OpenClinic is an easy to use, open source, medical records system written in PHP.",
+    "tags": [
+      "PHP",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "openmaxims",
+    "name": "openMAXIMS",
+    "owner": "IMS-MAXIMS",
+    "repo": "openMAXIMS",
+    "description": "Home of the openMAXIMS PAS and EPR",
+    "tags": [
+      "Java",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "dicomcloud",
+    "name": "DICOMcloud",
+    "owner": "DICOMcloud",
+    "repo": "DICOMcloud",
+    "description": "Azure friendly DICOMweb part 18 .NET server with qido-rs, wado-rs, stow-rs, wado-uri RESTful implementation",
+    "tags": [
+      "C#",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "kaapana",
+    "name": "kaapana",
+    "owner": "kaapana",
+    "repo": "kaapana",
+    "description": "Kaapana is an open source toolkit for state of the art platform provisioning in the field of medical data analysis. The applications comprise AI-based workflows and federated learning scenarios with a focus on radiological and radiotherapeutic imaging. The name Kaapana comes from the Hawaiian word kaʻāpana, meaning \"distributor\" or \"part\".",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-healthcare"
+  },
+  {
+    "slug": "aperturecomplexity",
+    "name": "ApertureComplexity",
+    "owner": "victorgabr",
+    "repo": "ApertureComplexity",
+    "description": "Python 3.x port of the Eclipse ESAPI plug-in script used in the study :  Predicting deliverability of volumetric-modulated arc therapy (VMAT) plans using aperture complexity analysis",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "beamschemev1",
+    "name": "BeamSchemeV1",
+    "owner": "alanphys",
+    "repo": "BeamSchemeV1",
+    "description": "A profile and image analysis tool for medical physics. This is virtually a complete rewrite of BeamScheme V0.54.",
+    "tags": [
+      "Pascal",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "cil",
+    "name": "CIL",
+    "owner": "TomographicImaging",
+    "repo": "CIL",
+    "description": "A versatile python framework for tomographic imaging",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "clinicaltemplatereader",
+    "name": "ClinicalTemplateReader",
+    "owner": "WUSTL-ClinicalDev",
+    "repo": "ClinicalTemplateReader",
+    "description": "A public API to interpret Eclipse plan templates, objective templates, and clinical protocols and utilize the interpretation in the generation of automated plans.",
+    "tags": [
+      "C#",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "conehead",
+    "name": "conehead",
+    "owner": "samuelpeet",
+    "repo": "conehead",
+    "description": "A collapsed-cone convolution radiotherapy dose calculation algorithm",
+    "tags": [
+      "Jupyter Notebook",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "deid",
+    "name": "deid",
+    "owner": "pydicom",
+    "repo": "deid",
+    "description": "best effort anonymization for medical images using python",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "dltk",
+    "name": "DLTK",
+    "owner": "DLTK",
+    "repo": "DLTK",
+    "description": "Deep Learning Toolkit for Medical Image Analysis",
+    "tags": [
+      "Python",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "esapix",
+    "name": "ESAPIX",
+    "owner": "rexcardan",
+    "repo": "ESAPIX",
+    "description": "Extension library for the Varian Eclipse Scripting API",
+    "tags": [
+      "C#",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  },
+  {
+    "slug": "evil-dicom",
+    "name": "Evil-DICOM",
+    "owner": "rexcardan",
+    "repo": "Evil-DICOM",
+    "description": "A C# DICOM Library",
+    "tags": [
+      "C#",
+      "Auto-discovered"
+    ],
+    "discoveredAt": "2026-06-25",
+    "source": "awesome-list:awesome-medphys"
+  }
+]

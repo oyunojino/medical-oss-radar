@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/", label: "대시보드 보기" },
-  { href: "/sbom", label: "SBOM 보기" },
-  { href: "/vulnerabilities", label: "취약점 스캔 보기" },
+  { href: "/", label: "대시보드" },
+  { href: "/sbom", label: "SBOM" },
+  { href: "/vulnerabilities", label: "취약점 스캔" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

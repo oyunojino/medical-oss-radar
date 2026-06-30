@@ -8,3 +8,6 @@ sbom-work/
 *.log
 *.tsbuildinfo
 
+
+.vercel
+.env*

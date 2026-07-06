@@ -9,11 +9,12 @@
 // Usage: npm run sbom            (all projects)
 //        npm run sbom -- openmrs pydicom   (only these slugs)
 
-import { readFile, mkdir, rm } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import path from "node:path";
+import { detectDevOnlyPackages } from "./dev-scope.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PROJECTS_TS = path.join(ROOT, "lib", "projects.ts");
@@ -92,6 +93,34 @@ function run(cmd, args, { cwd, timeoutMs } = {}) {
   });
 }
 
+function pypiNormalize(name) {
+  return name.toLowerCase().replace(/[-_.]+/g, "-");
+}
+
+/** Marks components that are only reachable via dev/test tooling (per
+ *  scripts/dev-scope.mjs) with CycloneDX `scope: "optional"`, so the OSV scan
+ *  can exclude them from vulnerability counting — they never ship. */
+async function tagDevScope(cdxPath, cloneDir) {
+  const devOnly = await detectDevOnlyPackages(cloneDir);
+  if (devOnly.size === 0) return 0;
+
+  const cdx = JSON.parse(await readFile(cdxPath, "utf8"));
+  let tagged = 0;
+  for (const c of cdx.components ?? []) {
+    if (!c.purl || !c.version) continue;
+    let key;
+    if (c.purl.startsWith("pkg:npm/")) key = `npm:${c.name}@${c.version}`;
+    else if (c.purl.startsWith("pkg:pypi/")) key = `pypi:${pypiNormalize(c.name)}@${c.version}`;
+    else continue;
+    if (devOnly.has(key)) {
+      c.scope = "optional";
+      tagged++;
+    }
+  }
+  if (tagged > 0) await writeFile(cdxPath, JSON.stringify(cdx));
+  return tagged;
+}
+
 async function safeRm(dir, tag) {
   try {
     await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 1000 });
@@ -154,7 +183,14 @@ async function processProject(project, index, total) {
       return { slug, ok: false, stage: "scan", reason: cdx.reason || spdx.reason };
     }
 
-    console.log(`${tag} — 완료`);
+    let devTagged = 0;
+    try {
+      devTagged = await tagDevScope(cdxPath, cloneDir);
+    } catch (err) {
+      console.warn(`${tag} — dev 스코프 태깅 실패(무시하고 계속): ${err.message}`);
+    }
+
+    console.log(`${tag} — 완료${devTagged > 0 ? ` (dev 전용 ${devTagged}건 태깅)` : ""}`);
     return { slug, ok: true };
   } catch (err) {
     console.warn(`${tag} — 예외 발생(다음 프로젝트로 진행): ${err.message}`);

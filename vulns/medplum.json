@@ -1,1 +1,1 @@
-{"slug":"medplum","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":889,"affected":[{"name":"js-yaml","version":"4.1.1","purl":"pkg:npm/js-yaml@4.1.1","vulnIds":["GHSA-h67p-54hq-rp68"]},{"name":"uuid","version":"9.0.1","purl":"pkg:npm/uuid@9.0.1","vulnIds":["GHSA-w5hq-g745-h8pq"]}]}
+{"slug":"medplum","scannedAt":"2026-07-06T07:07:01.729Z","componentCount":876,"affected":[{"name":"js-yaml","version":"4.1.1","purl":"pkg:npm/js-yaml@4.1.1","vulnIds":["GHSA-h67p-54hq-rp68"]},{"name":"uuid","version":"9.0.1","purl":"pkg:npm/uuid@9.0.1","vulnIds":["GHSA-w5hq-g745-h8pq"]}]}

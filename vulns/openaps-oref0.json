@@ -1,1 +1,1 @@
-{"slug":"openaps-oref0","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":3,"affected":[{"name":"requests","version":"2.25.1","purl":"pkg:pypi/requests@2.25.1","vulnIds":["GHSA-9hjg-9r4m-mvj7","GHSA-9wx4-h78v-vm56","GHSA-gc5v-m9x4-r6x2","GHSA-j8r2-6x86-q33q","PYSEC-2023-74"]}]}
+{"slug":"openaps-oref0","scannedAt":"2026-07-06T07:07:01.729Z","componentCount":3,"affected":[{"name":"requests","version":"2.25.1","purl":"pkg:pypi/requests@2.25.1","vulnIds":["GHSA-9hjg-9r4m-mvj7","GHSA-9wx4-h78v-vm56","GHSA-gc5v-m9x4-r6x2","GHSA-j8r2-6x86-q33q","PYSEC-2023-74"]}]}

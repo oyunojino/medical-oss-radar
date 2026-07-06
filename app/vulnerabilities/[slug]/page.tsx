@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allProjects } from "@/lib/projects";
-import { loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
-import { severityOf, SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
+import { buildVulnIndex, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
+import { SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
 import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
 
 export const dynamic = "force-dynamic";
@@ -24,11 +24,15 @@ export default async function VulnerabilityDetailPage({
   if (!report) notFound();
 
   const db = await loadVulnDb();
-  const summary = summarizeReport(params.slug, report, db);
+  const index = buildVulnIndex(db);
+  const summary = summarizeReport(params.slug, report, db, index);
   const project = allProjects.find((p) => p.slug === params.slug);
 
-  const uniqueIds = [...new Set(report.affected.flatMap((c) => c.vulnIds))].sort(
-    (a, b) => SEVERITY_ORDER.indexOf(severityOf(db[a])) - SEVERITY_ORDER.indexOf(severityOf(db[b]))
+  // Group by canonical id so a CVE and its GHSA/PYSEC/... aliases render as one card.
+  const canonicalIds = [
+    ...new Set(report.affected.flatMap((c) => c.vulnIds.map((id) => index.canonicalId(id)))),
+  ].sort(
+    (a, b) => SEVERITY_ORDER.indexOf(index.severityOf(a)) - SEVERITY_ORDER.indexOf(index.severityOf(b))
   );
 
   return (
@@ -93,32 +97,34 @@ export default async function VulnerabilityDetailPage({
         <>
           <section className="mb-10">
             <h2 className="mb-2 text-sm font-semibold text-ink">
-              취약점 ({uniqueIds.length})
+              취약점 ({canonicalIds.length})
             </h2>
             <div className="flex flex-col gap-3">
-              {uniqueIds.map((id) => {
-                const vuln = db[id];
-                const severity = severityOf(vuln);
+              {canonicalIds.map((canonicalId) => {
+                const vuln = index.representative(canonicalId);
+                const severity = index.severityOf(canonicalId);
+                const displayId = vuln?.id ?? canonicalId;
+                const aliases = index.membersOf(canonicalId).filter((m) => m !== displayId);
                 const affectedNames = report.affected
-                  .filter((c) => c.vulnIds.includes(id))
+                  .filter((c) => c.vulnIds.some((id) => index.canonicalId(id) === canonicalId))
                   .map((c) => `${c.name}${c.version ? `@${c.version}` : ""}`);
                 return (
-                  <div key={id} className="rounded-md border border-line bg-panel p-4">
+                  <div key={canonicalId} className="rounded-md border border-line bg-panel p-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <a
-                        href={`https://osv.dev/vulnerability/${id}`}
+                        href={`https://osv.dev/vulnerability/${displayId}`}
                         target="_blank"
                         rel="noreferrer"
                         className="font-mono text-sm font-semibold text-vital hover:underline"
                       >
-                        {id}
+                        {displayId}
                       </a>
                       <span
                         className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[severity]}`}
                       >
                         {severity}
                       </span>
-                      {(vuln?.aliases ?? []).slice(0, 3).map((alias) => (
+                      {aliases.slice(0, 3).map((alias) => (
                         <span
                           key={alias}
                           className="rounded-full border border-line px-2 py-0.5 font-mono text-[0.7rem] text-muted"
@@ -159,14 +165,19 @@ export default async function VulnerabilityDetailPage({
                       <td className="px-3 py-1.5 text-muted">{c.version ?? "—"}</td>
                       <td className="px-3 py-1.5">
                         <div className="flex flex-wrap gap-1.5">
-                          {c.vulnIds.map((id) => (
-                            <span
-                              key={id}
-                              className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[severityOf(db[id])]}`}
-                            >
-                              {id}
-                            </span>
-                          ))}
+                          {[...new Set(c.vulnIds.map((id) => index.canonicalId(id)))].map(
+                            (canonicalId) => {
+                              const displayId = index.representative(canonicalId)?.id ?? canonicalId;
+                              return (
+                                <span
+                                  key={canonicalId}
+                                  className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[index.severityOf(canonicalId)]}`}
+                                >
+                                  {displayId}
+                                </span>
+                              );
+                            }
+                          )}
                         </div>
                       </td>
                     </tr>

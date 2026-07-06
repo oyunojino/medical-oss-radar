@@ -111,8 +111,11 @@ async function main() {
       console.warn(`${slug} — SBOM을 읽을 수 없음: ${err.message}`);
       continue;
     }
+    // scope: "optional" marks dev/test-only packages (scripts/sbom.mjs +
+    // scripts/dev-scope.mjs) — they never ship, so they're excluded here
+    // rather than just from the report, saving OSV queries too.
     const comps = (cdx.components ?? [])
-      .filter((c) => c.purl)
+      .filter((c) => c.purl && c.scope !== "optional")
       .map((c) => ({ name: c.name, version: c.version, purl: c.purl }));
     perSlugComponents.set(slug, comps);
     for (const c of comps) purlSet.add(c.purl);

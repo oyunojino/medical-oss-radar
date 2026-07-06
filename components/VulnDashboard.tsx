@@ -56,9 +56,11 @@ function matches(row: VulnRow, query: string): boolean {
 export function VulnDashboard({
   rows,
   lastScanned,
+  globalStats,
 }: {
   rows: VulnRow[];
   lastScanned?: string;
+  globalStats: { vulnCount: number; bySeverity: Record<SeverityLevel, number> };
 }) {
   const [query, setQuery] = useState("");
   const [onlyVulnerable, setOnlyVulnerable] = useState(false);
@@ -83,17 +85,15 @@ export function VulnDashboard({
   );
 
   const totals = useMemo(() => {
-    const bySeverity = { ...EMPTY_SEVERITY };
     let vulnerableProjects = 0;
-    let totalVulns = 0;
     for (const r of rows) {
-      if (!r.summary) continue;
-      if (r.summary.vulnCount > 0) vulnerableProjects++;
-      totalVulns += r.summary.vulnCount;
-      for (const level of SEVERITY_ORDER) bySeverity[level] += r.summary.bySeverity[level];
+      if (r.summary && r.summary.vulnCount > 0) vulnerableProjects++;
     }
-    return { bySeverity, vulnerableProjects, totalVulns };
-  }, [rows]);
+    // bySeverity/totalVulns come from globalStats (props), not summed per-project:
+    // the same vuln+component+version affecting many projects must count once
+    // for the ecosystem, not once per project it happens to appear in.
+    return { bySeverity: globalStats.bySeverity, vulnerableProjects, totalVulns: globalStats.vulnCount };
+  }, [rows, globalStats]);
 
   const top = sorted.filter((r) => (r.summary?.vulnCount ?? 0) > 0).slice(0, 10);
 
@@ -117,7 +117,9 @@ export function VulnDashboard({
             >
               OSV.dev
             </a>{" "}
-            데이터베이스와 대조해 찾은 알려진 취약점입니다.
+            데이터베이스와 대조해 찾은 알려진 취약점입니다. CVE/GHSA/PYSEC 등 동일 취약점의
+            서로 다른 식별자는 하나로 묶고, (취약점, 컴포넌트, 버전) 조합 기준으로 프로젝트 간
+            중복도 제거한 수치입니다.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:items-end">

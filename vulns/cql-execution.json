@@ -1,1 +1,1 @@
-{"slug":"cql-execution","scannedAt":"2026-06-26T05:57:52.921Z","componentCount":101,"affected":[{"name":"qs","version":"6.15.0","purl":"pkg:npm/qs@6.15.0","vulnIds":["GHSA-q8mj-m7cp-5q26"]}]}
+{"slug":"cql-execution","scannedAt":"2026-07-06T07:07:01.729Z","componentCount":101,"affected":[{"name":"qs","version":"6.15.0","purl":"pkg:npm/qs@6.15.0","vulnIds":["GHSA-q8mj-m7cp-5q26"]}]}

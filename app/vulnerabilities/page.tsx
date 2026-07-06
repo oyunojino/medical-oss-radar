@@ -1,5 +1,13 @@
 import { allProjects } from "@/lib/projects";
-import { listVulnSlugs, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
+import {
+  buildVulnIndex,
+  listVulnSlugs,
+  loadVulnDb,
+  readSlugReport,
+  summarizeAcrossReports,
+  summarizeReport,
+  SlugVulnReport,
+} from "@/lib/osv";
 import { VulnDashboard, VulnRow } from "@/components/VulnDashboard";
 
 export const dynamic = "force-dynamic"; // npm run osv keeps appending files in the background
@@ -7,15 +15,20 @@ export const dynamic = "force-dynamic"; // npm run osv keeps appending files in 
 export default async function VulnerabilitiesIndexPage() {
   const slugs = await listVulnSlugs();
   const db = await loadVulnDb();
+  const index = buildVulnIndex(db);
   const projectMap = new Map(allProjects.map((p) => [p.slug, p]));
 
+  const reports: SlugVulnReport[] = [];
   const rows: VulnRow[] = await Promise.all(
     slugs.map(async (slug) => {
       const report = await readSlugReport(slug);
-      const summary = report ? summarizeReport(slug, report, db) : null;
+      if (report) reports.push(report);
+      const summary = report ? summarizeReport(slug, report, db, index) : null;
       return { slug, project: projectMap.get(slug), summary };
     })
   );
+
+  const globalStats = summarizeAcrossReports(reports, db, index);
 
   const lastScanned = rows.reduce<string | undefined>((latest, r) => {
     if (!r.summary?.scannedAt) return latest;
@@ -33,5 +46,5 @@ export default async function VulnerabilitiesIndexPage() {
     );
   }
 
-  return <VulnDashboard rows={rows} lastScanned={lastScanned} />;
+  return <VulnDashboard rows={rows} lastScanned={lastScanned} globalStats={globalStats} />;
 }

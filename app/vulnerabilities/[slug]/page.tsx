@@ -4,6 +4,7 @@ import { allProjects } from "@/lib/projects";
 import { buildVulnIndex, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
 import { SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
 import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
+import { findVexForCanonical, indexVexEntries, readSlugVex, VexEntry } from "@/lib/vex";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,55 @@ const SEVERITY_BADGE: Record<SeverityLevel, string> = {
   LOW: "border-vital/60 bg-vital-soft text-vital",
   UNKNOWN: "border-line bg-panel text-muted",
 };
+
+/** VEX pilot status pill for one (component, canonical vuln) pair. Renders
+ *  nothing when `entry` is undefined — that means either this repo was never
+ *  in the pilot's top-N, or this specific pair was never eligible (wrong
+ *  ecosystem, no fix-commit data) — silence is intentional, not an omission,
+ *  see the plan this pilot was built against. */
+function VexPill({ entry }: { entry: VexEntry | undefined }) {
+  if (!entry) return null;
+
+  if (entry.status === "not_affected") {
+    return (
+      <details className="inline-block align-middle">
+        <summary className="inline-block cursor-pointer list-none rounded-full border border-vital/50 bg-vital-soft px-2 py-0.5 font-mono text-[0.7rem] text-vital">
+          VEX: 영향 없음
+        </summary>
+        <div className="mt-1 max-w-xs rounded-md border border-line bg-panel p-2 text-[0.7rem] text-muted">
+          <p>
+            근거: 취약 함수가 실제 배포 버전 소스에 없음 (
+            {entry.evidence.functionNamesChecked.join(", ") || "함수명 없음"})
+          </p>
+          {entry.evidence.fixCommits[0] && (
+            <a
+              href={entry.evidence.fixCommits[0].url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 block text-vital hover:underline"
+            >
+              fix 커밋 보기 →
+            </a>
+          )}
+          <p className="mt-1">
+            검색한 파일 {entry.evidence.filesSearched}건
+            {entry.evidence.filesSkippedMinified > 0 &&
+              ` (minified/bundled ${entry.evidence.filesSkippedMinified}건 제외)`}
+          </p>
+        </div>
+      </details>
+    );
+  }
+
+  return (
+    <span
+      title={entry.evidence.reason ?? undefined}
+      className="rounded-full border border-line px-2 py-0.5 font-mono text-[0.7rem] text-muted"
+    >
+      VEX: 조사 중
+    </span>
+  );
+}
 
 export default async function VulnerabilityDetailPage({
   params,
@@ -27,6 +77,9 @@ export default async function VulnerabilityDetailPage({
   const index = buildVulnIndex(db);
   const summary = summarizeReport(params.slug, report, db, index);
   const project = allProjects.find((p) => p.slug === params.slug);
+
+  const vexReport = await readSlugVex(params.slug);
+  const vexMap = indexVexEntries(vexReport);
 
   // Group by canonical id so a CVE and its GHSA/PYSEC/... aliases render as one card.
   const canonicalIds = [
@@ -168,12 +221,21 @@ export default async function VulnerabilityDetailPage({
                           {[...new Set(c.vulnIds.map((id) => index.canonicalId(id)))].map(
                             (canonicalId) => {
                               const displayId = index.representative(canonicalId)?.id ?? canonicalId;
+                              const vexEntry = findVexForCanonical(
+                                vexMap,
+                                index,
+                                canonicalId,
+                                c.name,
+                                c.version ?? ""
+                              );
                               return (
-                                <span
-                                  key={canonicalId}
-                                  className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[index.severityOf(canonicalId)]}`}
-                                >
-                                  {displayId}
+                                <span key={canonicalId} className="inline-flex items-center gap-1">
+                                  <span
+                                    className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[index.severityOf(canonicalId)]}`}
+                                  >
+                                    {displayId}
+                                  </span>
+                                  <VexPill entry={vexEntry} />
                                 </span>
                               );
                             }

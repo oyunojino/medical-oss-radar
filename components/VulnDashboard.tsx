@@ -11,6 +11,8 @@ export type VulnRow = {
   slug: string;
   project?: ProjectWithCategory;
   summary: VulnSummary | null;
+  /** True if scripts/vex-scan.mjs has run against this slug (top-N pilot). */
+  vexScanned?: boolean;
 };
 
 const EMPTY_SEVERITY: Record<SeverityLevel, number> = {
@@ -57,10 +59,12 @@ export function VulnDashboard({
   rows,
   lastScanned,
   globalStats,
+  vexCoverage,
 }: {
   rows: VulnRow[];
   lastScanned?: string;
   globalStats: { vulnCount: number; bySeverity: Record<SeverityLevel, number> };
+  vexCoverage?: { scannedSlugs: number; totalSlugs: number };
 }) {
   const [query, setQuery] = useState("");
   const [onlyVulnerable, setOnlyVulnerable] = useState(false);
@@ -168,6 +172,23 @@ export function VulnDashboard({
         </div>
       </section>
 
+      {vexCoverage && vexCoverage.totalSlugs > 0 && (
+        <section className="mb-10 rounded-md border border-line bg-panel p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold text-ink">VEX 판정 파일럿</h2>
+            <span className="font-mono text-xs text-muted">
+              적용 {vexCoverage.scannedSlugs}/{vexCoverage.totalSlugs}개 프로젝트
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-muted">
+            OSV는 "이 버전에 CVE가 있다"까지만 판단하고 실제 실행 여부는 보지 않습니다. 취약점 수
+            상위 프로젝트부터 fix 커밋과 실제 배포 소스를 대조해 취약 코드가 남아있지 않은 경우를
+            자동으로 걸러내는 VEX 판정을 시범 적용 중이며, 나머지 프로젝트는 아직 검증 대상에
+            포함되지 않았습니다. 위 취약점 통계는 이 파일럿과 무관하게 원래 집계 방식 그대로입니다.
+          </p>
+        </section>
+      )}
+
       {top.length > 0 && (
         <section className="mb-10">
           <div className="mb-1 flex items-baseline gap-3">
@@ -228,9 +249,16 @@ export function VulnDashboard({
                 href={`/vulnerabilities/${row.slug}`}
                 className="rounded-md border border-line bg-panel p-4 transition hover:border-vital/50"
               >
-                <p className="font-mono text-[0.7rem] text-muted/80">
-                  {row.project?.categoryCode ?? "—"}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="font-mono text-[0.7rem] text-muted/80">
+                    {row.project?.categoryCode ?? "—"}
+                  </p>
+                  {row.vexScanned && (
+                    <span className="rounded-full border border-vital/50 px-1.5 py-0.5 font-mono text-[0.6rem] text-vital">
+                      VEX 파일럿
+                    </span>
+                  )}
+                </div>
                 <h3 className="mt-1 text-base font-semibold text-ink">
                   {row.project?.name ?? row.slug}
                 </h3>

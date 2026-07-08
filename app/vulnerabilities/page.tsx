@@ -8,6 +8,7 @@ import {
   summarizeReport,
   SlugVulnReport,
 } from "@/lib/osv";
+import { listVexSlugs } from "@/lib/vex";
 import { VulnDashboard, VulnRow } from "@/components/VulnDashboard";
 
 export const dynamic = "force-dynamic"; // npm run osv keeps appending files in the background
@@ -17,6 +18,7 @@ export default async function VulnerabilitiesIndexPage() {
   const db = await loadVulnDb();
   const index = buildVulnIndex(db);
   const projectMap = new Map(allProjects.map((p) => [p.slug, p]));
+  const vexSlugs = new Set(await listVexSlugs());
 
   const reports: SlugVulnReport[] = [];
   const rows: VulnRow[] = await Promise.all(
@@ -24,11 +26,12 @@ export default async function VulnerabilitiesIndexPage() {
       const report = await readSlugReport(slug);
       if (report) reports.push(report);
       const summary = report ? summarizeReport(slug, report, db, index) : null;
-      return { slug, project: projectMap.get(slug), summary };
+      return { slug, project: projectMap.get(slug), summary, vexScanned: vexSlugs.has(slug) };
     })
   );
 
   const globalStats = summarizeAcrossReports(reports, db, index);
+  const vexCoverage = { scannedSlugs: vexSlugs.size, totalSlugs: rows.length };
 
   const lastScanned = rows.reduce<string | undefined>((latest, r) => {
     if (!r.summary?.scannedAt) return latest;
@@ -46,5 +49,12 @@ export default async function VulnerabilitiesIndexPage() {
     );
   }
 
-  return <VulnDashboard rows={rows} lastScanned={lastScanned} globalStats={globalStats} />;
+  return (
+    <VulnDashboard
+      rows={rows}
+      lastScanned={lastScanned}
+      globalStats={globalStats}
+      vexCoverage={vexCoverage}
+    />
+  );
 }

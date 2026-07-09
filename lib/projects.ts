@@ -766,7 +766,7 @@ export const categories: Category[] = [
         slug: "labkey-server",
         name: "LabKey Server",
         owner: "LabKey",
-        repo: "labkey-server",
+        repo: "server",
         description:
           "생명과학 데이터와 연구 워크플로우를 관리하는 오픈소스 플랫폼.",
         tags: ["Java", "Research"],
@@ -774,7 +774,7 @@ export const categories: Category[] = [
       {
         slug: "openspecimen",
         name: "OpenSpecimen",
-        owner: "informatics-llc",
+        owner: "krishagni",
         repo: "openspecimen",
         description: "바이오뱅크와 임상 검체 관리를 위한 오픈소스 플랫폼.",
         tags: ["Java", "Biobanking"],
@@ -782,8 +782,8 @@ export const categories: Category[] = [
       {
         slug: "openlmis",
         name: "OpenLMIS",
-        owner: "openlmis",
-        repo: "openlmis",
+        owner: "OpenLMIS",
+        repo: "openlmis-ref-distro",
         description:
           "공중보건 공급망과 의약품 배급을 위한 오픈소스 물류관리 시스템.",
         tags: ["Java", "Logistics"],

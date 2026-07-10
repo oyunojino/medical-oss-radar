@@ -5,7 +5,12 @@
 별개로, "이미 알고 있는 후보 프로젝트들이 지금도 살아있는지"를 빠르게 스캔하는 용도로
 만들었습니다.
 
-현재 10개 카테고리, 114개 프로젝트가 들어 있습니다. 사용한 발굴 루트:
+대시보드 외에 SBOM 생성(`npm run sbom`), OSV 취약점 스캔(`npm run osv`), CISA KEV 실제
+악용 여부 대조(`npm run kev`), VEX `not_affected` 자동 판정 파일럿(`npm run vex`) 기능도
+포함되어 있습니다. 페이지 구성과 데이터 흐름 전체 설명은
+[docs/site-overview.md](./docs/site-overview.md)를 참고하세요.
+
+현재 11개 카테고리, 203개 프로젝트가 들어 있습니다(자동 발견·미검증 후보 포함). 사용한 발굴 루트:
 
 1. **awesome-healthcare / awesome-medphys / awesome-medical-imaging** 큐레이션 리스트 — EHR·01, IMG·02, RTX·03 기본 골격
 2. **직접 키워드 검색** (OpenAPS, AndroidAPS 등 인공췌장 생태계) — DEV·04
@@ -117,3 +122,6 @@ lib/
 scripts/
   discover.mjs     GitHub Topics / awesome 리스트에서 신규 후보를 찾아오는 스크립트
 ```
+
+이 트리는 대시보드(`/`) 부분만 보여줍니다. SBOM/취약점/VEX/KEV 관련 파일 전체 구조는
+[docs/site-overview.md](./docs/site-overview.md)의 "기술 스택 / 구조" 절을 참고하세요.

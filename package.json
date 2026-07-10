@@ -11,6 +11,7 @@
     "check-repos": "node scripts/check-repos.mjs",
     "sbom": "node scripts/sbom.mjs",
     "osv": "node scripts/osv-scan.mjs",
+    "kev": "node scripts/kev-scan.mjs",
     "vex": "node scripts/vex-scan.mjs"
   },
   "dependencies": {

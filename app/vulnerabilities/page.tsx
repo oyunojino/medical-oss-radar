@@ -2,6 +2,7 @@ import { allProjects } from "@/lib/projects";
 import {
   buildVulnIndex,
   listVulnSlugs,
+  loadKevDb,
   loadVulnDb,
   readSlugReport,
   summarizeAcrossReports,
@@ -15,8 +16,8 @@ export const dynamic = "force-dynamic"; // npm run osv keeps appending files in 
 
 export default async function VulnerabilitiesIndexPage() {
   const slugs = await listVulnSlugs();
-  const db = await loadVulnDb();
-  const index = buildVulnIndex(db);
+  const [db, kevDb] = await Promise.all([loadVulnDb(), loadKevDb()]);
+  const index = buildVulnIndex(db, kevDb);
   const projectMap = new Map(allProjects.map((p) => [p.slug, p]));
   const vexSlugs = new Set(await listVexSlugs());
 

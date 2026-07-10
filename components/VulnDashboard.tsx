@@ -46,6 +46,10 @@ function worstSeverity(summary: VulnSummary | null): SeverityLevel {
   return "UNKNOWN";
 }
 
+function isKevListed(summary: VulnSummary | null): boolean {
+  return (summary?.kevCount ?? 0) > 0;
+}
+
 function matches(row: VulnRow, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
@@ -63,7 +67,7 @@ export function VulnDashboard({
 }: {
   rows: VulnRow[];
   lastScanned?: string;
-  globalStats: { vulnCount: number; bySeverity: Record<SeverityLevel, number> };
+  globalStats: { vulnCount: number; bySeverity: Record<SeverityLevel, number>; kevCount: number };
   vexCoverage?: { scannedSlugs: number; totalSlugs: number };
 }) {
   const [query, setQuery] = useState("");
@@ -72,6 +76,11 @@ export function VulnDashboard({
   const sorted = useMemo(
     () =>
       [...rows].sort((a, b) => {
+        // Actively-exploited-in-the-wild (KEV) outranks raw CVSS severity —
+        // a MEDIUM being exploited today matters more than an unexploited CRITICAL.
+        const ak = isKevListed(a.summary) ? 0 : 1;
+        const bk = isKevListed(b.summary) ? 0 : 1;
+        if (ak !== bk) return ak - bk;
         const aw = SEVERITY_RANK[worstSeverity(a.summary)];
         const bw = SEVERITY_RANK[worstSeverity(b.summary)];
         if (aw !== bw) return aw - bw;
@@ -93,13 +102,19 @@ export function VulnDashboard({
     for (const r of rows) {
       if (r.summary && r.summary.vulnCount > 0) vulnerableProjects++;
     }
-    // bySeverity/totalVulns come from globalStats (props), not summed per-project:
-    // the same vuln+component+version affecting many projects must count once
-    // for the ecosystem, not once per project it happens to appear in.
-    return { bySeverity: globalStats.bySeverity, vulnerableProjects, totalVulns: globalStats.vulnCount };
+    // bySeverity/totalVulns/kevCount come from globalStats (props), not summed
+    // per-project: the same vuln+component+version affecting many projects must
+    // count once for the ecosystem, not once per project it happens to appear in.
+    return {
+      bySeverity: globalStats.bySeverity,
+      vulnerableProjects,
+      totalVulns: globalStats.vulnCount,
+      kevCount: globalStats.kevCount,
+    };
   }, [rows, globalStats]);
 
   const top = sorted.filter((r) => (r.summary?.vulnCount ?? 0) > 0).slice(0, 10);
+  const kevListed = sorted.filter((r) => isKevListed(r.summary));
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -142,10 +157,11 @@ export function VulnDashboard({
         </div>
       </header>
 
-      <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         <StatCard label="스캔된 프로젝트" value={rows.length} />
         <StatCard label="취약 프로젝트" value={totals.vulnerableProjects} accent="text-coral" />
         <StatCard label="고유 취약점" value={totals.totalVulns} />
+        <StatCard label="KEV 등재 (실제 악용)" value={totals.kevCount} accent="text-coral" />
         {SEVERITY_ORDER.filter((l) => l !== "UNKNOWN").map((level) => (
           <StatCard
             key={level}
@@ -186,6 +202,39 @@ export function VulnDashboard({
             자동으로 걸러내는 VEX 판정을 시범 적용 중이며, 나머지 프로젝트는 아직 검증 대상에
             포함되지 않았습니다. 위 취약점 통계는 이 파일럿과 무관하게 원래 집계 방식 그대로입니다.
           </p>
+        </section>
+      )}
+
+      {kevListed.length > 0 && (
+        <section className="mb-10">
+          <div className="mb-1 flex items-baseline gap-3">
+            <span className="rounded-full bg-coral px-2 py-0.5 font-mono text-xs tracking-tagcode text-paper">
+              KEV · {kevListed.length}
+            </span>
+            <h2 className="text-lg font-semibold text-ink">실제 악용 확인됨 (CISA KEV)</h2>
+          </div>
+          <p className="mb-3 text-xs text-muted">
+            미국 CISA가 실제 공격에 악용된 것으로 확인한 CVE입니다. CVSS 심각도와 무관하게 최우선
+            패치 대상입니다.
+          </p>
+          <div className="chart-rule mb-3" />
+          <div className="flex flex-col gap-2">
+            {kevListed.map((row) => (
+              <Link
+                key={row.slug}
+                href={`/vulnerabilities/${row.slug}`}
+                className="flex items-center gap-4 rounded-md border border-coral/40 bg-coral-soft px-4 py-2.5 transition hover:border-coral"
+              >
+                <span className="w-36 shrink-0 truncate font-mono text-sm text-ink sm:w-44">
+                  {row.project?.name ?? row.slug}
+                </span>
+                <SeverityBar counts={row.summary!.bySeverity} className="h-2 flex-1" />
+                <span className="w-16 shrink-0 text-right font-mono text-xs text-coral">
+                  KEV {row.summary!.kevCount}건
+                </span>
+              </Link>
+            ))}
+          </div>
         </section>
       )}
 
@@ -256,6 +305,11 @@ export function VulnDashboard({
                   {row.vexScanned && (
                     <span className="rounded-full border border-vital/50 px-1.5 py-0.5 font-mono text-[0.6rem] text-vital">
                       VEX 파일럿
+                    </span>
+                  )}
+                  {isKevListed(row.summary) && (
+                    <span className="rounded-full bg-coral px-1.5 py-0.5 font-mono text-[0.6rem] text-paper">
+                      KEV
                     </span>
                   )}
                 </div>

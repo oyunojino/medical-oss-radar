@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allProjects } from "@/lib/projects";
-import { buildVulnIndex, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
-import { SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
+import { buildVulnIndex, loadKevDb, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
+import { KevEntry, SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
 import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
 import { findVexForCanonical, indexVexEntries, readSlugVex, VexEntry } from "@/lib/vex";
 
@@ -65,6 +65,30 @@ function VexPill({ entry }: { entry: VexEntry | undefined }) {
   );
 }
 
+/** CISA KEV badge — renders nothing when `entry` is undefined (this CVE isn't
+ *  in the catalog, or vulns/_kev.json hasn't been generated yet via `npm run
+ *  kev`). Presence in KEV is a binary fact from an authoritative government
+ *  source, so unlike VexPill there's no "ambiguous" state to represent. */
+function KevPill({ entry }: { entry: KevEntry | undefined }) {
+  if (!entry) return null;
+
+  return (
+    <details className="inline-block align-middle">
+      <summary className="inline-block cursor-pointer list-none rounded-full bg-coral px-2 py-0.5 font-mono text-[0.7rem] text-paper">
+        ⚠ KEV — 실제 악용 확인됨
+      </summary>
+      <div className="mt-1 max-w-xs rounded-md border border-coral/40 bg-coral-soft p-2 text-[0.7rem] text-ink">
+        <p className="font-semibold">{entry.vulnerabilityName}</p>
+        <p className="mt-1">등재일 {entry.dateAdded} · 조치 기한 {entry.dueDate}</p>
+        <p className="mt-1">
+          랜섬웨어 악용:{" "}
+          {entry.knownRansomwareCampaignUse === "Known" ? "확인됨" : "미확인"}
+        </p>
+      </div>
+    </details>
+  );
+}
+
 export default async function VulnerabilityDetailPage({
   params,
 }: {
@@ -73,8 +97,8 @@ export default async function VulnerabilityDetailPage({
   const report = await readSlugReport(params.slug);
   if (!report) notFound();
 
-  const db = await loadVulnDb();
-  const index = buildVulnIndex(db);
+  const [db, kevDb] = await Promise.all([loadVulnDb(), loadKevDb()]);
+  const index = buildVulnIndex(db, kevDb);
   const summary = summarizeReport(params.slug, report, db, index);
   const project = allProjects.find((p) => p.slug === params.slug);
 
@@ -177,6 +201,7 @@ export default async function VulnerabilityDetailPage({
                       >
                         {severity}
                       </span>
+                      <KevPill entry={index.kevInfo(canonicalId)} />
                       {aliases.slice(0, 3).map((alias) => (
                         <span
                           key={alias}
@@ -236,6 +261,7 @@ export default async function VulnerabilityDetailPage({
                                     {displayId}
                                   </span>
                                   <VexPill entry={vexEntry} />
+                                  <KevPill entry={index.kevInfo(canonicalId)} />
                                 </span>
                               );
                             }

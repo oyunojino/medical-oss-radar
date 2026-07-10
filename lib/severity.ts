@@ -50,7 +50,20 @@ export type VulnSummary = {
   affectedComponentCount: number;
   vulnCount: number;
   bySeverity: Record<SeverityLevel, number>;
+  kevCount: number;
 };
+
+/** One CISA KEV catalog entry — a CVE the US government has confirmed is being
+ *  actively exploited, independent of how "severe" the vuln is rated elsewhere. */
+export type KevEntry = {
+  dateAdded: string;
+  dueDate: string;
+  vulnerabilityName: string;
+  knownRansomwareCampaignUse: string;
+  shortDescription: string;
+};
+
+export type KevDb = Record<string, KevEntry>; // key = CVE id
 
 /** Highest severity present, used for sort order on the list page. */
 export function worstSeverity(summary: VulnSummary): SeverityLevel {

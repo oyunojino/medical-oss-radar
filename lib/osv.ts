@@ -1,6 +1,8 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import {
+  KevDb,
+  KevEntry,
   OsvVuln,
   SeverityLevel,
   SEVERITY_ORDER,
@@ -10,10 +12,11 @@ import {
 } from "./severity";
 
 export { severityOf, worstSeverity, SEVERITY_ORDER };
-export type { OsvVuln, SeverityLevel, VulnSummary };
+export type { OsvVuln, SeverityLevel, VulnSummary, KevDb, KevEntry };
 
 const VULN_DIR = path.join(process.cwd(), "vulns");
 const DB_PATH = path.join(VULN_DIR, "_db.json");
+const KEV_DB_PATH = path.join(VULN_DIR, "_kev.json");
 
 export type AffectedComponent = {
   name: string;
@@ -65,6 +68,17 @@ export async function loadVulnDb(): Promise<Record<string, OsvVuln>> {
   return out;
 }
 
+/** Optional CISA KEV cache written by scripts/kev-scan.mjs, keyed by CVE id.
+ *  Purely additive — if the file doesn't exist (kev-scan hasn't been run yet),
+ *  every lookup just returns undefined and nothing else in the pipeline changes. */
+export async function loadKevDb(): Promise<KevDb> {
+  try {
+    return JSON.parse(await readFile(KEV_DB_PATH, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
 /** Groups OSV ids that are aliases of one another (CVE/GHSA/PYSEC/... all
  *  describing the same underlying vulnerability) into a single canonical id,
  *  so counting logic doesn't treat each alias as a separate finding. */
@@ -73,9 +87,10 @@ export type VulnIndex = {
   representative: (canonicalId: string) => OsvVuln | undefined;
   severityOf: (canonicalId: string) => SeverityLevel;
   membersOf: (canonicalId: string) => string[];
+  kevInfo: (canonicalId: string) => KevEntry | undefined;
 };
 
-export function buildVulnIndex(db: Record<string, OsvVuln>): VulnIndex {
+export function buildVulnIndex(db: Record<string, OsvVuln>, kevDb: KevDb = {}): VulnIndex {
   const parent = new Map<string, string>();
   const find = (x: string): string => {
     if (!parent.has(x)) parent.set(x, x);
@@ -110,6 +125,7 @@ export function buildVulnIndex(db: Record<string, OsvVuln>): VulnIndex {
 
   const representativeByRoot = new Map<string, OsvVuln | undefined>();
   const severityByRoot = new Map<string, SeverityLevel>();
+  const kevByRoot = new Map<string, KevEntry | undefined>();
   for (const [root, members] of membersByRoot) {
     const known = members.filter((m) => db[m]);
     // Prefer a CVE id for the representative — most legible for a paper/report.
@@ -122,6 +138,12 @@ export function buildVulnIndex(db: Record<string, OsvVuln>): VulnIndex {
       if (SEVERITY_ORDER.indexOf(s) < SEVERITY_ORDER.indexOf(worst)) worst = s;
     }
     severityByRoot.set(root, worst);
+
+    // A vuln group is KEV-listed if ANY of its aliases (not just the CVE
+    // representative — some groups' repId falls back to a GHSA id) is a CVE
+    // present in the KEV catalog.
+    const kevMember = members.find((m) => m.startsWith("CVE-") && kevDb[m]);
+    kevByRoot.set(root, kevMember ? kevDb[kevMember] : undefined);
   }
 
   return {
@@ -129,6 +151,7 @@ export function buildVulnIndex(db: Record<string, OsvVuln>): VulnIndex {
     representative: (canonicalId: string) => representativeByRoot.get(canonicalId),
     severityOf: (canonicalId: string) => severityByRoot.get(canonicalId) ?? "UNKNOWN",
     membersOf: (canonicalId: string) => membersByRoot.get(canonicalId) ?? [canonicalId],
+    kevInfo: (canonicalId: string) => kevByRoot.get(canonicalId),
   };
 }
 
@@ -159,9 +182,11 @@ export function summarizeReport(
     UNKNOWN: 0,
   };
   const keys = affectedKeys(report, index);
+  let kevCount = 0;
   for (const key of keys) {
     const canonicalId = key.split("::")[0];
     bySeverity[index.severityOf(canonicalId)]++;
+    if (index.kevInfo(canonicalId)) kevCount++;
   }
 
   return {
@@ -170,6 +195,7 @@ export function summarizeReport(
     affectedComponentCount: report.affected.length,
     vulnCount: keys.size,
     bySeverity,
+    kevCount,
   };
 }
 
@@ -181,7 +207,7 @@ export function summarizeAcrossReports(
   reports: SlugVulnReport[],
   db: Record<string, OsvVuln>,
   index: VulnIndex = buildVulnIndex(db)
-): { vulnCount: number; bySeverity: Record<SeverityLevel, number> } {
+): { vulnCount: number; bySeverity: Record<SeverityLevel, number>; kevCount: number } {
   const bySeverity: Record<SeverityLevel, number> = {
     CRITICAL: 0,
     HIGH: 0,
@@ -190,12 +216,15 @@ export function summarizeAcrossReports(
     UNKNOWN: 0,
   };
   const seen = new Set<string>();
+  let kevCount = 0;
   for (const report of reports) {
     for (const key of affectedKeys(report, index)) {
       if (seen.has(key)) continue;
       seen.add(key);
-      bySeverity[index.severityOf(key.split("::")[0])]++;
+      const canonicalId = key.split("::")[0];
+      bySeverity[index.severityOf(canonicalId)]++;
+      if (index.kevInfo(canonicalId)) kevCount++;
     }
   }
-  return { vulnCount: seen.size, bySeverity };
+  return { vulnCount: seen.size, bySeverity, kevCount };
 }

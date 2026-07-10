@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allProjects } from "@/lib/projects";
-import { buildVulnIndex, loadKevDb, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
+import {
+  buildVulnIndex,
+  loadKevDb,
+  loadNvdDb,
+  loadVulnDb,
+  readSlugReport,
+  summarizeReport,
+} from "@/lib/osv";
 import { SEVERITY_ORDER } from "@/lib/severity";
 import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
 import { findVexForCanonical, indexVexEntries, readSlugVex, VexEntry } from "@/lib/vex";
@@ -19,8 +26,8 @@ export default async function VulnerabilityDetailPage({
   const report = await readSlugReport(params.slug);
   if (!report) notFound();
 
-  const [db, kevDb] = await Promise.all([loadVulnDb(), loadKevDb()]);
-  const index = buildVulnIndex(db, kevDb);
+  const [db, kevDb, nvdDb] = await Promise.all([loadVulnDb(), loadKevDb(), loadNvdDb()]);
+  const index = buildVulnIndex(db, kevDb, nvdDb);
   const summary = summarizeReport(params.slug, report, db, index);
   const project = allProjects.find((p) => p.slug === params.slug);
 

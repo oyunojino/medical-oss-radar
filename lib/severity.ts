@@ -65,6 +65,18 @@ export type KevEntry = {
 
 export type KevDb = Record<string, KevEntry>; // key = CVE id
 
+/** One NVD (NIST National Vulnerability Database) CVSS lookup result, used to
+ *  backfill a severity when OSV's `database_specific.severity` is absent —
+ *  NVD is the authoritative source that issues CVE ids and their official
+ *  CVSS scores, unlike OSV which just aggregates ecosystem advisories. */
+export type NvdEntry = {
+  severity: SeverityLevel;
+  baseScore: number;
+  cvssVersion: string;
+};
+
+export type NvdDb = Record<string, NvdEntry>; // key = CVE id
+
 /** Highest severity present, used for sort order on the list page. */
 export function worstSeverity(summary: VulnSummary): SeverityLevel {
   for (const level of SEVERITY_ORDER) {

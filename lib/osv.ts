@@ -3,6 +3,8 @@ import path from "node:path";
 import {
   KevDb,
   KevEntry,
+  NvdDb,
+  NvdEntry,
   OsvVuln,
   SeverityLevel,
   SEVERITY_ORDER,
@@ -12,11 +14,12 @@ import {
 } from "./severity";
 
 export { severityOf, worstSeverity, SEVERITY_ORDER };
-export type { OsvVuln, SeverityLevel, VulnSummary, KevDb, KevEntry };
+export type { OsvVuln, SeverityLevel, VulnSummary, KevDb, KevEntry, NvdDb, NvdEntry };
 
 const VULN_DIR = path.join(process.cwd(), "vulns");
 const DB_PATH = path.join(VULN_DIR, "_db.json");
 const KEV_DB_PATH = path.join(VULN_DIR, "_kev.json");
+const NVD_DB_PATH = path.join(VULN_DIR, "_nvd.json");
 
 export type AffectedComponent = {
   name: string;
@@ -79,6 +82,16 @@ export async function loadKevDb(): Promise<KevDb> {
   }
 }
 
+/** Optional NVD CVSS cache written by scripts/nvd-scan.mjs, keyed by CVE id.
+ *  Purely additive, same shape of guarantee as loadKevDb(). */
+export async function loadNvdDb(): Promise<NvdDb> {
+  try {
+    return JSON.parse(await readFile(NVD_DB_PATH, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
 /** Groups OSV ids that are aliases of one another (CVE/GHSA/PYSEC/... all
  *  describing the same underlying vulnerability) into a single canonical id,
  *  so counting logic doesn't treat each alias as a separate finding. */
@@ -90,7 +103,11 @@ export type VulnIndex = {
   kevInfo: (canonicalId: string) => KevEntry | undefined;
 };
 
-export function buildVulnIndex(db: Record<string, OsvVuln>, kevDb: KevDb = {}): VulnIndex {
+export function buildVulnIndex(
+  db: Record<string, OsvVuln>,
+  kevDb: KevDb = {},
+  nvdDb: NvdDb = {}
+): VulnIndex {
   const parent = new Map<string, string>();
   const find = (x: string): string => {
     if (!parent.has(x)) parent.set(x, x);
@@ -136,6 +153,15 @@ export function buildVulnIndex(db: Record<string, OsvVuln>, kevDb: KevDb = {}): 
     for (const m of known) {
       const s = severityOf(db[m]);
       if (SEVERITY_ORDER.indexOf(s) < SEVERITY_ORDER.indexOf(worst)) worst = s;
+    }
+    // OSV doesn't always carry a normalized severity (e.g. PyPI/Go advisories
+    // often skip database_specific.severity entirely). Fall back to NVD's
+    // official CVSS-derived severity for any CVE alias in the group — NVD is
+    // the authority that issues CVE ids, so this only fills gaps OSV left
+    // blank, never overrides a severity OSV already reported.
+    if (worst === "UNKNOWN") {
+      const nvdMember = members.find((m) => m.startsWith("CVE-") && nvdDb[m]);
+      if (nvdMember) worst = nvdDb[nvdMember].severity;
     }
     severityByRoot.set(root, worst);
 

@@ -34,6 +34,7 @@
 
 - `npm run osv` (`scripts/osv-scan.mjs`)가 `sboms/`의 CycloneDX purl들을 모아 [OSV.dev](https://osv.dev) API에 배치 조회 → 신규/변경된 것만 상세 조회(캐시: `vulns/_db.json`) → `vulns/<slug>.json`에 프로젝트별 영향 컴포넌트 저장
 - 심각도 분류(`lib/severity.ts`): CRITICAL/HIGH/MEDIUM/LOW/UNKNOWN — OSV가 정규화된 심각도를 제공하지 않으면 추측하지 않고 UNKNOWN 처리
+- **NVD 심각도 보강** (`npm run nvd`, `scripts/nvd-scan.mjs`): OSV가 `database_specific.severity`를 안 주는 항목(PyPI/Go 등 일부 생태계 어드바이저리에서 흔함)에 한해, CVE를 발급하는 공식 기관인 NIST NVD에서 CVSS 점수를 조회해 `vulns/_nvd.json`에 캐싱. OSV가 이미 심각도를 제공한 항목은 절대 덮어쓰지 않고, UNKNOWN으로 빠질 항목만 채움(`lib/osv.ts`의 `buildVulnIndex`). 비인증 시 30초당 5회, `NVD_API_KEY` 설정 시 30초당 50회로 조회
 - **dev-only 의존성 필터링** (`scripts/dev-scope.mjs`): npm/pnpm devDependencies, Pipfile.lock의 develop 그룹처럼 배포 산출물에 포함되지 않는 패키지는 취약점 집계에서 제외 (모든 락파일이 동의할 때만 제외 — 보수적으로 판단)
 - **VEX 처리** (`npm run vex`, `scripts/vex-scan.mjs`): "vulnerable_code_not_present" 판정 하나를 자동화하는 파일럿. 취약점 수정 커밋의 diff에서 변경된 함수명을 뽑아, 실제 설치된 버전의 소스 코드에 그 함수가 없으면 `not_affected`로 표시. 조금이라도 애매하면(코드 발견/난독화/조회 실패 등) 절대 `not_affected`로 넘기지 않고 `under_investigation`으로 남김 — 의료 공급망 데이터라 거짓 안전 판정이 미확인 상태보다 훨씬 위험하다는 원칙([[feedback_conservative_safety_bias]] 참고). 아직 시험판 단계로 진행 상황과 남은 설계 과제는 [feedback-followup.md](./feedback-followup.md) 참고.
 - **CISA KEV 연동** (`npm run kev`, `scripts/kev-scan.mjs`): OSV 심각도는 CVSS 기준 "이론상 위험도"만 나타내고 실제 악용 여부는 반영하지 않음. CISA의 [Known Exploited Vulnerabilities 카탈로그](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)(공개 JSON, 인증 불필요)를 CVE 별칭으로 대조해 `vulns/_kev.json`에 저장, 실제 악용이 확인된 CVE(예: bahmni의 Log4Shell, Spring4Shell)에 배지를 붙이고 심각도보다 우선 정렬. `.github/workflows/kev-scan.yml`이 매일 03:00 KST에 실행해 카탈로그가 바뀌면 자동으로 main에 커밋 → Vercel이 push 시 재배포 (Vercel Cron은 서버리스라 파일을 커밋할 수 없어 GitHub Actions로 구현)
@@ -65,9 +66,9 @@ lib/
   discovered.ts/json   자동 수집 후보 (미검증)
   github.ts       GitHub API 호출 + 캐싱 + 인증/rate-limit 처리
   sbom.ts         SBOM 파일 읽기/요약
-  osv.ts          OSV 취약점 DB 로드/집계 + CISA KEV 대조(`_kev.json` 조인)
+  osv.ts          OSV 취약점 DB 로드/집계 + CISA KEV(`_kev.json`)/NVD(`_nvd.json`) 조인
   vex.ts          VEX 스캔 결과 로드
-  severity.ts     심각도 타입/정규화 + KEV 엔트리 타입 (서버·클라이언트 공용)
+  severity.ts     심각도 타입/정규화 + KEV/NVD 엔트리 타입 (서버·클라이언트 공용)
   time.ts         "n일 전" 포맷 + 활동 상태 계산
 scripts/
   discover.mjs     GitHub Topics/awesome 리스트에서 신규 후보 발굴
@@ -77,6 +78,7 @@ scripts/
   vex-scan.mjs     VEX not_affected 자동 판정 파일럿
   dev-scope.mjs    dev-only 의존성 탐지 (취약점 집계 제외용)
   kev-scan.mjs     CISA KEV 카탈로그 동기화 (npm run kev → vulns/_kev.json)
+  nvd-scan.mjs     NVD 심각도 보강 조회 (npm run nvd → vulns/_nvd.json)
 .github/workflows/
   kev-scan.yml     매일 03:00 KST에 kev-scan 실행, 변경 시 main에 자동 커밋
 ```

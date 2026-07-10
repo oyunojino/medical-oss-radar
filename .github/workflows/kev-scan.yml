@@ -1,0 +1,41 @@
+name: KEV catalog sync
+
+# Keeps vulns/_kev.json (CISA Known Exploited Vulnerabilities catalog) fresh.
+# Runs npm run kev, and if the catalog changed, commits it straight to main —
+# Vercel auto-deploys on push, so this is the whole "keep it live" pipeline.
+# (Not a Vercel Cron Job: serverless functions there have no writable/persistent
+# filesystem, so they can't commit the refreshed file back to the repo.)
+
+on:
+  schedule:
+    - cron: "0 18 * * *" # 03:00 KST daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npm run kev
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- vulns/_kev.json; then
+            echo "No KEV catalog changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add vulns/_kev.json
+          git commit -m "chore: sync CISA KEV catalog"
+          git push

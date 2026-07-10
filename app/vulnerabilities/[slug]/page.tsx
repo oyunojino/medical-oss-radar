@@ -2,92 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allProjects } from "@/lib/projects";
 import { buildVulnIndex, loadKevDb, loadVulnDb, readSlugReport, summarizeReport } from "@/lib/osv";
-import { KevEntry, SEVERITY_ORDER, SeverityLevel } from "@/lib/severity";
+import { SEVERITY_ORDER } from "@/lib/severity";
 import { SeverityBar, SEVERITY_COLOR } from "@/components/SeverityBar";
 import { findVexForCanonical, indexVexEntries, readSlugVex, VexEntry } from "@/lib/vex";
+import { AffectedRow } from "@/components/VulnAffectedTable";
+import { VulnCardData } from "@/components/VulnCardList";
+import { VulnTabs } from "@/components/VulnTabs";
 
 export const dynamic = "force-dynamic";
-
-const SEVERITY_BADGE: Record<SeverityLevel, string> = {
-  CRITICAL: "border-coral bg-coral-soft text-coral",
-  HIGH: "border-coral/60 bg-coral-soft text-coral",
-  MEDIUM: "border-amber bg-amber-soft text-amber",
-  LOW: "border-vital/60 bg-vital-soft text-vital",
-  UNKNOWN: "border-line bg-panel text-muted",
-};
-
-/** VEX pilot status pill for one (component, canonical vuln) pair. Renders
- *  nothing when `entry` is undefined — that means either this repo was never
- *  in the pilot's top-N, or this specific pair was never eligible (wrong
- *  ecosystem, no fix-commit data) — silence is intentional, not an omission,
- *  see the plan this pilot was built against. */
-function VexPill({ entry }: { entry: VexEntry | undefined }) {
-  if (!entry) return null;
-
-  if (entry.status === "not_affected") {
-    return (
-      <details className="inline-block align-middle">
-        <summary className="inline-block cursor-pointer list-none rounded-full border border-vital/50 bg-vital-soft px-2 py-0.5 font-mono text-[0.7rem] text-vital">
-          VEX: 영향 없음
-        </summary>
-        <div className="mt-1 max-w-xs rounded-md border border-line bg-panel p-2 text-[0.7rem] text-muted">
-          <p>
-            근거: 취약 함수가 실제 배포 버전 소스에 없음 (
-            {entry.evidence.functionNamesChecked.join(", ") || "함수명 없음"})
-          </p>
-          {entry.evidence.fixCommits[0] && (
-            <a
-              href={entry.evidence.fixCommits[0].url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-1 block text-vital hover:underline"
-            >
-              fix 커밋 보기 →
-            </a>
-          )}
-          <p className="mt-1">
-            검색한 파일 {entry.evidence.filesSearched}건
-            {entry.evidence.filesSkippedMinified > 0 &&
-              ` (minified/bundled ${entry.evidence.filesSkippedMinified}건 제외)`}
-          </p>
-        </div>
-      </details>
-    );
-  }
-
-  return (
-    <span
-      title={entry.evidence.reason ?? undefined}
-      className="rounded-full border border-line px-2 py-0.5 font-mono text-[0.7rem] text-muted"
-    >
-      VEX: 조사 중
-    </span>
-  );
-}
-
-/** CISA KEV badge — renders nothing when `entry` is undefined (this CVE isn't
- *  in the catalog, or vulns/_kev.json hasn't been generated yet via `npm run
- *  kev`). Presence in KEV is a binary fact from an authoritative government
- *  source, so unlike VexPill there's no "ambiguous" state to represent. */
-function KevPill({ entry }: { entry: KevEntry | undefined }) {
-  if (!entry) return null;
-
-  return (
-    <details className="inline-block align-middle">
-      <summary className="inline-block cursor-pointer list-none rounded-full bg-coral px-2 py-0.5 font-mono text-[0.7rem] text-paper">
-        ⚠ KEV — 실제 악용 확인됨
-      </summary>
-      <div className="mt-1 max-w-xs rounded-md border border-coral/40 bg-coral-soft p-2 text-[0.7rem] text-ink">
-        <p className="font-semibold">{entry.vulnerabilityName}</p>
-        <p className="mt-1">등재일 {entry.dateAdded} · 조치 기한 {entry.dueDate}</p>
-        <p className="mt-1">
-          랜섬웨어 악용:{" "}
-          {entry.knownRansomwareCampaignUse === "Known" ? "확인됨" : "미확인"}
-        </p>
-      </div>
-    </details>
-  );
-}
 
 export default async function VulnerabilityDetailPage({
   params,
@@ -112,10 +34,63 @@ export default async function VulnerabilityDetailPage({
     (a, b) => SEVERITY_ORDER.indexOf(index.severityOf(a)) - SEVERITY_ORDER.indexOf(index.severityOf(b))
   );
 
+  // VulnAffectedTable is a client component (search + pagination), so `index`
+  // (a bundle of closures over Maps) can't be passed to it as a prop — resolve
+  // everything it needs into plain data here first.
+  const affectedRows: AffectedRow[] = report.affected.map((c) => ({
+    name: c.name,
+    version: c.version,
+    purl: c.purl,
+    vulns: [...new Set(c.vulnIds.map((id) => index.canonicalId(id)))].map((canonicalId) => ({
+      canonicalId,
+      displayId: index.representative(canonicalId)?.id ?? canonicalId,
+      severity: index.severityOf(canonicalId),
+      kev: index.kevInfo(canonicalId),
+      vex: findVexForCanonical(vexMap, index, canonicalId, c.name, c.version ?? ""),
+    })),
+  }));
+
+  // Same server->client plain-data constraint as affectedRows above. A VEX
+  // status is per (component, vuln) pair, but this card is per canonical vuln
+  // — so a vuln affecting several components can have several VEX verdicts.
+  // Conservative rollup: only call it "영향없음" when EVERY affected pairing
+  // was cleared; any unresolved or unchecked pairing keeps it out of that
+  // bucket, matching this project's "never overstate safety" rule.
+  const vulnCards: VulnCardData[] = canonicalIds.map((canonicalId) => {
+    const vuln = index.representative(canonicalId);
+    const displayId = vuln?.id ?? canonicalId;
+    const affectedComponents = report.affected.filter((c) =>
+      c.vulnIds.some((id) => index.canonicalId(id) === canonicalId)
+    );
+    const vexEntries = affectedComponents
+      .map((c) => findVexForCanonical(vexMap, index, canonicalId, c.name, c.version ?? ""))
+      .filter((e): e is VexEntry => Boolean(e));
+    const vexStatus =
+      vexEntries.length === 0
+        ? ("unreviewed" as const)
+        : vexEntries.every((e) => e.status === "not_affected")
+          ? ("not_affected" as const)
+          : ("under_investigation" as const);
+
+    return {
+      canonicalId,
+      displayId,
+      severity: index.severityOf(canonicalId),
+      kev: index.kevInfo(canonicalId),
+      aliases: index.membersOf(canonicalId).filter((m) => m !== displayId),
+      summary: vuln?.summary || "요약 정보 없음",
+      affectedNames: affectedComponents.map((c) => `${c.name}${c.version ? `@${c.version}` : ""}`),
+      vexStatus,
+    };
+  });
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <header className="mb-8 flex flex-col gap-2 border-b border-line pb-6">
-        <Link href="/vulnerabilities" className="text-sm text-vital hover:underline">
+        <Link
+          href="/vulnerabilities"
+          className="self-start rounded-md border border-line bg-panel px-3 py-1.5 font-mono text-xs text-ink transition hover:border-vital/50 hover:text-vital"
+        >
           ← 취약점 목록으로
         </Link>
         <p className="font-mono text-xs tracking-tagcode text-vital">
@@ -144,7 +119,10 @@ export default async function VulnerabilityDetailPage({
           )}
         </div>
 
-        <Link href={`/sbom/${params.slug}`} className="mt-1 text-sm text-vital hover:underline">
+        <Link
+          href={`/sbom/${params.slug}`}
+          className="mt-1 self-start rounded-md border border-vital/50 bg-vital-soft px-3 py-1.5 font-mono text-xs text-vital transition hover:border-vital"
+        >
           이 프로젝트의 SBOM 보기 →
         </Link>
 
@@ -171,110 +149,7 @@ export default async function VulnerabilityDetailPage({
           OSV.dev 기준 알려진 취약점이 발견되지 않았습니다.
         </p>
       ) : (
-        <>
-          <section className="mb-10">
-            <h2 className="mb-2 text-sm font-semibold text-ink">
-              취약점 ({canonicalIds.length})
-            </h2>
-            <div className="flex flex-col gap-3">
-              {canonicalIds.map((canonicalId) => {
-                const vuln = index.representative(canonicalId);
-                const severity = index.severityOf(canonicalId);
-                const displayId = vuln?.id ?? canonicalId;
-                const aliases = index.membersOf(canonicalId).filter((m) => m !== displayId);
-                const affectedNames = report.affected
-                  .filter((c) => c.vulnIds.some((id) => index.canonicalId(id) === canonicalId))
-                  .map((c) => `${c.name}${c.version ? `@${c.version}` : ""}`);
-                return (
-                  <div key={canonicalId} className="rounded-md border border-line bg-panel p-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <a
-                        href={`https://osv.dev/vulnerability/${displayId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-mono text-sm font-semibold text-vital hover:underline"
-                      >
-                        {displayId}
-                      </a>
-                      <span
-                        className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[severity]}`}
-                      >
-                        {severity}
-                      </span>
-                      <KevPill entry={index.kevInfo(canonicalId)} />
-                      {aliases.slice(0, 3).map((alias) => (
-                        <span
-                          key={alias}
-                          className="rounded-full border border-line px-2 py-0.5 font-mono text-[0.7rem] text-muted"
-                        >
-                          {alias}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="mt-2 text-sm text-ink">
-                      {vuln?.summary || "요약 정보 없음"}
-                    </p>
-                    <p className="mt-2 text-xs text-muted">
-                      영향받는 구성요소: {affectedNames.join(", ")}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-2 text-sm font-semibold text-ink">
-              영향받는 구성요소 ({summary.affectedComponentCount})
-            </h2>
-            <div className="overflow-x-auto rounded-md border border-line">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-panel text-xs uppercase text-muted">
-                  <tr>
-                    <th className="px-3 py-2">이름</th>
-                    <th className="px-3 py-2">버전</th>
-                    <th className="px-3 py-2">취약점</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.affected.map((c) => (
-                    <tr key={c.purl} className="border-t border-line">
-                      <td className="px-3 py-1.5 font-mono text-ink">{c.name}</td>
-                      <td className="px-3 py-1.5 text-muted">{c.version ?? "—"}</td>
-                      <td className="px-3 py-1.5">
-                        <div className="flex flex-wrap gap-1.5">
-                          {[...new Set(c.vulnIds.map((id) => index.canonicalId(id)))].map(
-                            (canonicalId) => {
-                              const displayId = index.representative(canonicalId)?.id ?? canonicalId;
-                              const vexEntry = findVexForCanonical(
-                                vexMap,
-                                index,
-                                canonicalId,
-                                c.name,
-                                c.version ?? ""
-                              );
-                              return (
-                                <span key={canonicalId} className="inline-flex items-center gap-1">
-                                  <span
-                                    className={`rounded-full border px-2 py-0.5 font-mono text-[0.7rem] ${SEVERITY_BADGE[index.severityOf(canonicalId)]}`}
-                                  >
-                                    {displayId}
-                                  </span>
-                                  <VexPill entry={vexEntry} />
-                                  <KevPill entry={index.kevInfo(canonicalId)} />
-                                </span>
-                              );
-                            }
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </>
+        <VulnTabs vulnCards={vulnCards} affectedRows={affectedRows} />
       )}
     </div>
   );

@@ -4,9 +4,12 @@ import { useMemo, useState } from "react";
 import { Project } from "@/lib/projects";
 import { RepoResult } from "@/lib/github";
 import { daysSince, VitalStatus, vitalStatus } from "@/lib/time";
+import { ExpandableGrid } from "./ExpandableGrid";
 import { ProjectCard } from "./ProjectCard";
 import { StatCard } from "./StatCard";
 import { StackedBar } from "./StackedBar";
+
+const INITIAL_VISIBLE_PER_CATEGORY = 9; // 3 rows at the lg 3-column grid
 
 const STATUS_COLOR: Record<VitalStatus, string> = {
   active: "#0F9D8C",
@@ -46,6 +49,7 @@ export function Dashboard({
   lastSynced: string;
 }) {
   const [query, setQuery] = useState("");
+  const hasQuery = query.trim() !== "";
 
   const filtered = useMemo(
     () =>
@@ -153,9 +157,23 @@ export function Dashboard({
         </p>
       )}
 
+      {filtered.length > 1 && (
+        <nav className="mb-8 flex flex-wrap gap-2">
+          {filtered.map((category) => (
+            <a
+              key={category.slug}
+              href={`#${category.slug}`}
+              className="rounded-full border border-line bg-panel px-3 py-1 font-mono text-[0.7rem] text-muted transition hover:border-vital/50 hover:text-ink"
+            >
+              {category.code} ({category.items.length})
+            </a>
+          ))}
+        </nav>
+      )}
+
       <div className="flex flex-col gap-12">
         {filtered.map((category) => (
-          <section key={category.slug}>
+          <section key={category.slug} id={category.slug} className="scroll-mt-6">
             <div className="mb-1 flex items-baseline gap-3">
               <span className="font-mono text-xs tracking-tagcode text-vital">
                 {category.code}
@@ -167,15 +185,15 @@ export function Dashboard({
             <div className="chart-rule mb-1" />
             <p className="mb-4 text-sm text-muted">{category.subtitle}</p>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {category.items.map(({ project, result }) => (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  result={result}
-                />
-              ))}
-            </div>
+            <ExpandableGrid
+              items={category.items}
+              initialCount={INITIAL_VISIBLE_PER_CATEGORY}
+              forceExpand={hasQuery}
+              keyOf={({ project }) => project.slug}
+              renderItem={({ project, result }) => (
+                <ProjectCard project={project} result={result} />
+              )}
+            />
           </section>
         ))}
       </div>

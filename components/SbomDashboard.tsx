@@ -4,8 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ProjectWithCategory } from "@/lib/projects";
 import type { SbomSummary } from "@/lib/sbom";
+import { ExpandableGrid } from "./ExpandableGrid";
 import { StatCard } from "./StatCard";
 import { RankBar } from "./StackedBar";
+
+const INITIAL_VISIBLE = 24;
 
 export type SbomRow = {
   slug: string;
@@ -92,26 +95,23 @@ export function SbomDashboard({ rows }: { rows: SbomRow[] }) {
             <h2 className="text-lg font-semibold text-ink">구성요소 많은 프로젝트</h2>
           </div>
           <div className="chart-rule mb-3" />
-          <div className="flex flex-col gap-2">
-            {top.map((row, i) => (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {top.map((row) => (
               <Link
                 key={row.slug}
                 href={`/sbom/${row.slug}`}
-                className="flex items-center gap-4 rounded-md border border-line bg-panel px-4 py-2.5 transition hover:border-vital/50"
+                className="flex items-center justify-between gap-3 rounded-md border border-line bg-panel px-4 py-2.5 transition hover:border-vital/50"
               >
-                <span className="w-5 shrink-0 text-right font-mono text-xs text-muted">
-                  {i + 1}
-                </span>
-                <span className="w-36 shrink-0 truncate font-mono text-sm text-ink sm:w-44">
-                  {row.project?.name ?? row.slug}
-                </span>
-                <RankBar
-                  value={row.summary?.componentCount ?? 0}
-                  max={maxComponents}
-                  className="h-2 flex-1"
-                />
-                <span className="w-16 shrink-0 text-right font-mono text-xs text-muted">
-                  {row.summary?.componentCount ?? 0}개
+                <div className="min-w-0">
+                  <p className="font-mono text-[0.65rem] text-muted/80">
+                    {row.project?.categoryCode ?? "—"}
+                  </p>
+                  <p className="truncate text-sm font-medium text-ink">
+                    {row.project?.name ?? row.slug}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full border border-vital/50 px-2 py-0.5 font-mono text-xs text-vital">
+                  구성요소 {row.summary?.componentCount ?? 0}개
                 </span>
               </Link>
             ))}
@@ -129,10 +129,13 @@ export function SbomDashboard({ rows }: { rows: SbomRow[] }) {
             조건에 맞는 프로젝트가 없습니다.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((row) => (
+          <ExpandableGrid
+            items={filtered}
+            initialCount={INITIAL_VISIBLE}
+            forceExpand={query.trim() !== ""}
+            keyOf={(row) => row.slug}
+            renderItem={(row) => (
               <Link
-                key={row.slug}
                 href={`/sbom/${row.slug}`}
                 className="rounded-md border border-line bg-panel p-4 transition hover:border-vital/50"
               >
@@ -165,8 +168,8 @@ export function SbomDashboard({ rows }: { rows: SbomRow[] }) {
                   </p>
                 )}
               </Link>
-            ))}
-          </div>
+            )}
+          />
         )}
       </section>
     </div>

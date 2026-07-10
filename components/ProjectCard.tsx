@@ -8,6 +8,8 @@ function formatStars(n: number): string {
   return String(n);
 }
 
+const MAX_VISIBLE_TAGS = 4;
+
 export function ProjectCard({
   project,
   result,
@@ -46,10 +48,12 @@ export function ProjectCard({
         </div>
       </div>
 
-      <p className="text-sm leading-snug text-muted">{project.description}</p>
+      <p className="line-clamp-2 text-sm leading-snug text-muted">
+        {project.description}
+      </p>
 
       <div className="flex flex-wrap gap-1.5">
-        {project.tags.map((tag) => (
+        {project.tags.slice(0, MAX_VISIBLE_TAGS).map((tag) => (
           <span
             key={tag}
             className="rounded-sm bg-paper px-1.5 py-0.5 font-mono text-[0.65rem] tracking-tagcode text-muted"
@@ -57,6 +61,11 @@ export function ProjectCard({
             {tag.toUpperCase()}
           </span>
         ))}
+        {project.tags.length > MAX_VISIBLE_TAGS && (
+          <span className="rounded-sm bg-paper px-1.5 py-0.5 font-mono text-[0.65rem] tracking-tagcode text-muted/70">
+            +{project.tags.length - MAX_VISIBLE_TAGS}
+          </span>
+        )}
       </div>
 
       <div className="mt-1 flex items-center justify-between border-t border-dashed border-line pt-3">

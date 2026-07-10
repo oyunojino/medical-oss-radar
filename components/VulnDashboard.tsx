@@ -4,8 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ProjectWithCategory } from "@/lib/projects";
 import { SeverityLevel, SEVERITY_ORDER, VulnSummary } from "@/lib/severity";
+import { ExpandableGrid } from "./ExpandableGrid";
 import { SeverityBar, SEVERITY_COLOR } from "./SeverityBar";
 import { StatCard } from "./StatCard";
+
+const INITIAL_VISIBLE = 24;
 
 export type VulnRow = {
   slug: string;
@@ -157,11 +160,11 @@ export function VulnDashboard({
         </div>
       </header>
 
-      <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+      <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
         <StatCard label="스캔된 프로젝트" value={rows.length} />
         <StatCard label="취약 프로젝트" value={totals.vulnerableProjects} accent="text-coral" />
         <StatCard label="고유 취약점" value={totals.totalVulns} />
-        <StatCard label="KEV 등재 (실제 악용)" value={totals.kevCount} accent="text-coral" />
+        <StatCard label="KEV 등재" value={totals.kevCount} accent="text-coral" />
         {SEVERITY_ORDER.filter((l) => l !== "UNKNOWN").map((level) => (
           <StatCard
             key={level}
@@ -218,18 +221,22 @@ export function VulnDashboard({
             패치 대상입니다.
           </p>
           <div className="chart-rule mb-3" />
-          <div className="flex flex-col gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {kevListed.map((row) => (
               <Link
                 key={row.slug}
                 href={`/vulnerabilities/${row.slug}`}
-                className="flex items-center gap-4 rounded-md border border-coral/40 bg-coral-soft px-4 py-2.5 transition hover:border-coral"
+                className="flex items-center justify-between gap-3 rounded-md border border-coral/40 bg-coral-soft px-4 py-2.5 transition hover:border-coral"
               >
-                <span className="w-36 shrink-0 truncate font-mono text-sm text-ink sm:w-44">
-                  {row.project?.name ?? row.slug}
-                </span>
-                <SeverityBar counts={row.summary!.bySeverity} className="h-2 flex-1" />
-                <span className="w-16 shrink-0 text-right font-mono text-xs text-coral">
+                <div className="min-w-0">
+                  <p className="font-mono text-[0.65rem] text-coral/70">
+                    {row.project?.categoryCode ?? "—"}
+                  </p>
+                  <p className="truncate text-sm font-medium text-ink">
+                    {row.project?.name ?? row.slug}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full bg-coral px-2 py-0.5 font-mono text-xs text-paper">
                   KEV {row.summary!.kevCount}건
                 </span>
               </Link>
@@ -247,22 +254,23 @@ export function VulnDashboard({
             <h2 className="text-lg font-semibold text-ink">위험도 높은 프로젝트</h2>
           </div>
           <div className="chart-rule mb-3" />
-          <div className="flex flex-col gap-2">
-            {top.map((row, i) => (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {top.map((row) => (
               <Link
                 key={row.slug}
                 href={`/vulnerabilities/${row.slug}`}
-                className="flex items-center gap-4 rounded-md border border-line bg-panel px-4 py-2.5 transition hover:border-coral/50"
+                className="flex items-center justify-between gap-3 rounded-md border border-line bg-panel px-4 py-2.5 transition hover:border-coral/50"
               >
-                <span className="w-5 shrink-0 text-right font-mono text-xs text-muted">
-                  {i + 1}
-                </span>
-                <span className="w-36 shrink-0 truncate font-mono text-sm text-ink sm:w-44">
-                  {row.project?.name ?? row.slug}
-                </span>
-                <SeverityBar counts={row.summary!.bySeverity} className="h-2 flex-1" />
-                <span className="w-16 shrink-0 text-right font-mono text-xs text-muted">
-                  {row.summary!.vulnCount}건
+                <div className="min-w-0">
+                  <p className="font-mono text-[0.65rem] text-muted/80">
+                    {row.project?.categoryCode ?? "—"}
+                  </p>
+                  <p className="truncate text-sm font-medium text-ink">
+                    {row.project?.name ?? row.slug}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full border border-coral/50 px-2 py-0.5 font-mono text-xs text-coral">
+                  취약점 {row.summary!.vulnCount}건
                 </span>
               </Link>
             ))}
@@ -291,10 +299,13 @@ export function VulnDashboard({
             조건에 맞는 프로젝트가 없습니다.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((row) => (
+          <ExpandableGrid
+            items={filtered}
+            initialCount={INITIAL_VISIBLE}
+            forceExpand={query.trim() !== "" || onlyVulnerable}
+            keyOf={(row) => row.slug}
+            renderItem={(row) => (
               <Link
-                key={row.slug}
                 href={`/vulnerabilities/${row.slug}`}
                 className="rounded-md border border-line bg-panel p-4 transition hover:border-vital/50"
               >
@@ -334,8 +345,8 @@ export function VulnDashboard({
                   <span>{row.summary?.affectedComponentCount ?? 0}개 구성요소 영향</span>
                 </div>
               </Link>
-            ))}
-          </div>
+            )}
+          />
         )}
       </section>
     </div>

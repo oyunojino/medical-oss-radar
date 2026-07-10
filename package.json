@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "discover": "node scripts/discover.mjs",
+    "check-repos": "node scripts/check-repos.mjs",
     "sbom": "node scripts/sbom.mjs",
     "osv": "node scripts/osv-scan.mjs",
     "vex": "node scripts/vex-scan.mjs"
